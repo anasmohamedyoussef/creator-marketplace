@@ -1,0 +1,1134 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Rawi Creator Marketplace</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: two-tier app header (brand bar + scrolling tab strip) over a campaign context strip; single 1040px working column of quiet cards */
+:root{
+  --bg:#F5F6F8; --surface:#FFFFFF; --sunk:#F0F2F5; --line:#E2E6EB; --line-strong:#CDD3DB;
+  --ink:#0F1A24; --ink-2:#2A3542; --muted:#667180; --accent:#0B6B5C; --accent-hover:#095A4D; --accent-ink:#FFFFFF; --accent-soft:#E3F1EE;
+  --saffron:#D99A1E; --saffron-soft:#FCF3E1;
+  --ok:#17763A; --ok-soft:#E5F4EA; --warn:#8A5300; --warn-soft:#FCF0DC; --bad:#B42318; --bad-soft:#FDECEA;
+  --shadow:0 1px 2px rgba(15,26,36,.05),0 1px 1px rgba(15,26,36,.03);
+  --f-ui:"Manrope","IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-ar:"IBM Plex Sans Arabic","Manrope",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --r:12px; --r-sm:8px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1116; --surface:#131A21; --sunk:#1A222B; --line:#252F3A; --line-strong:#34404D;
+  --ink:#E8EDF2; --ink-2:#C7D0D9; --muted:#8C98A6; --accent:#3FB6A1; --accent-hover:#5CC6B3; --accent-ink:#04201B; --accent-soft:#12302B;
+  --saffron:#E9B44C; --saffron-soft:#33290F;
+  --ok:#5CCB82; --ok-soft:#13291C; --warn:#F0B35A; --warn-soft:#33250F; --bad:#FF8B80; --bad-soft:#3A1715;
+  --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1116; --surface:#131A21; --sunk:#1A222B; --line:#252F3A; --line-strong:#34404D;
+  --ink:#E8EDF2; --ink-2:#C7D0D9; --muted:#8C98A6; --accent:#3FB6A1; --accent-hover:#5CC6B3; --accent-ink:#04201B; --accent-soft:#12302B;
+  --saffron:#E9B44C; --saffron-soft:#33290F;
+  --ok:#5CCB82; --ok-soft:#13291C; --warn:#F0B35A; --warn-soft:#33250F; --bad:#FF8B80; --bad-soft:#3A1715;
+  --shadow:0 1px 2px rgba(0,0,0,.4); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{font-family:var(--f-ui);text-wrap:balance;margin:0;line-height:1.25;color:var(--ink)}
+h2{font-size:1.2rem;font-weight:700;letter-spacing:-.015em}
+h3{font-size:.95rem;font-weight:700;letter-spacing:-.005em}
+p{margin:0}
+b,strong{font-weight:700}
+[dir=rtl],[dir=auto]{font-family:var(--f-ar)}
+.mono{font-family:var(--f-mono);font-size:.92em}
+.num,td.num,.stat b,.score .num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* Header */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar > .wrap{display:flex;align-items:center;gap:12px;padding-block:12px}
+.logo{display:flex;align-items:center;gap:10px;margin-inline-end:auto;min-width:0}
+.logo svg{flex:none}
+.logo .name{display:grid;line-height:1.1}
+.logo b{font-size:1.05rem;letter-spacing:-.02em}
+.logo .ar{font-family:var(--f-ar);font-size:.78rem;color:var(--muted)}
+.logo .demo{font-size:.68rem;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;margin-inline-start:2px}
+.seg{display:inline-flex;background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:3px;flex:none}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 .82rem var(--f-ui);padding:6px 14px;border-radius:7px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.tabs{overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tabs .wrap{display:flex;flex-wrap:nowrap;gap:4px;padding-block:0;min-width:max-content}
+.tabs button{border:0;background:none;color:var(--muted);font:600 .86rem var(--f-ui);padding:11px 10px 12px;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.tabs button:hover{color:var(--ink-2)}
+.tabs button[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs button .n{font-size:.72rem;font-weight:700;background:var(--sunk);color:var(--muted);border-radius:999px;padding:0 7px;line-height:1.6}
+.tabs button[aria-current="page"] .n{background:var(--accent-soft);color:var(--accent)}
+.ctx{border-bottom:1px solid var(--line);background:var(--bg)}
+.ctx .wrap{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding-block:10px;font-size:.82rem;color:var(--muted)}
+.ctx b{color:var(--ink);font-weight:700}
+.ctx .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;margin-inline-end:6px}
+
+main .wrap{padding-block:22px 56px;display:grid;gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:16px;min-width:0;box-shadow:var(--shadow)}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.head > div{display:grid;gap:4px;min-width:0;flex:1 1 260px}
+.head > div > p.muted{max-width:62ch}
+.eyebrow{font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.02em}
+
+/* Controls */
+label.f{display:grid;gap:6px;font-weight:600;font-size:.84rem;color:var(--ink-2)}
+textarea,input[type=text],input[type=number],select{width:100%;font:inherit;font-size:.92rem;color:var(--ink);background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:9px 12px;transition:border-color .15s}
+input[type=file]{font:inherit;font-size:.85rem;color:var(--muted)}
+textarea{min-height:96px;resize:vertical;line-height:1.5}
+textarea:hover,input:hover,select:hover{border-color:var(--muted)}
+textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row > *{flex:1 1 180px;min-width:0}
+.btn{border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);font:600 .85rem var(--f-ui);height:36px;padding:0 14px;border-radius:var(--r-sm);cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;white-space:nowrap;transition:background .15s,border-color .15s}
+.btn:hover{background:var(--sunk)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{height:30px;padding:0 11px;font-size:.8rem}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.check{display:inline-flex;gap:8px;align-items:center;font-size:.86rem;cursor:pointer;color:var(--ink-2)}
+.check input{accent-color:var(--accent);width:16px;height:16px}
+details summary{font-size:.85rem}
+
+/* Chips */
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.73rem;font-weight:600;line-height:1;padding:5px 9px;border-radius:999px;background:var(--sunk);color:var(--ink-2);white-space:nowrap;border:1px solid transparent}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.sf{background:transparent;color:var(--muted);border-color:var(--line)}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip.plain::before,.chip.sf::before{display:none}
+.chip.plain{background:var(--surface);border-color:var(--line);color:var(--ink-2)}
+.note{font-size:.84rem;background:var(--saffron-soft);color:var(--ink);border-radius:var(--r-sm);padding:10px 12px;border:1px solid color-mix(in srgb,var(--saffron) 30%,transparent)}
+.status{font-size:.83rem;color:var(--muted)}
+.err{color:var(--bad)}
+
+/* Brief */
+.brief{display:grid;gap:18px 24px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.brief section{display:grid;gap:6px;align-content:start;min-width:0}
+.brief section h3{font-size:.78rem;color:var(--muted);font-weight:700;letter-spacing:.02em}
+.brief ul{margin:0;padding-inline-start:18px;display:grid;gap:5px;color:var(--ink-2)}
+.brief .full{grid-column:1/-1}
+.hook{font-size:.95rem;font-weight:600;background:var(--sunk);border-radius:var(--r-sm);padding:9px 12px;border-inline-start:3px solid var(--saffron)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:.88rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-weight:600}
+
+/* Creator list */
+.list{display:grid;gap:10px}
+.creator{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);transition:border-color .15s}
+.creator:hover{border-color:var(--line-strong)}
+.creator.off{opacity:.55}
+.creator h3 span{font-weight:500}
+.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.95rem;color:var(--accent);background:var(--accent-soft)}
+.creator .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.creator .why{font-size:.82rem;color:var(--muted);margin-top:6px}
+.score{display:grid;justify-items:end;gap:6px}
+.score .num{font-size:1.25rem;font-weight:800;letter-spacing:-.02em}
+.score .num small{font-size:.7rem;color:var(--muted);font-weight:600;letter-spacing:0}
+.meter{width:76px;height:4px;background:var(--sunk);border-radius:2px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:2px}
+@media (max-width:560px){.creator{grid-template-columns:40px 1fr}.score{grid-column:1/-1;grid-auto-flow:column;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:10px}.av{width:40px;height:40px}}
+
+/* Drafts and cards inside panels */
+.draft{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);display:grid;gap:12px;padding:16px;min-width:0}
+.script{white-space:pre-wrap;font-size:.9rem;background:var(--sunk);border-radius:var(--r-sm);padding:12px 14px;color:var(--ink-2)}
+.checks{display:grid;gap:7px;margin:0;padding:0;list-style:none}
+.checks li{display:grid;grid-template-columns:20px 1fr;gap:9px;font-size:.86rem;align-items:start}
+.checks .ic{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:.65rem;font-weight:800;margin-top:1px}
+.ic.p{background:var(--ok-soft);color:var(--ok)}
+.ic.f{background:var(--bad-soft);color:var(--bad)}
+.aiout{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.stat{background:var(--surface);padding:14px 16px;display:grid;gap:3px;align-content:start}
+.stat .eyebrow{font-size:.76rem;font-weight:600}
+.stat b{font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
+.stat .muted{font-size:.78rem!important}
+
+/* Tables */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
+table{width:100%;border-collapse:collapse;font-size:.86rem;min-width:520px}
+th,td{text-align:start;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+th{font-size:.74rem;color:var(--muted);font-weight:700;background:var(--sunk)}
+td.num,th.num{text-align:end}
+tbody tr:hover td{background:color-mix(in srgb,var(--sunk) 55%,transparent)}
+
+/* Permit */
+.permit{border-radius:var(--r);padding:18px;background:var(--ink);color:var(--surface);display:grid;gap:6px;position:relative;overflow:hidden}
+.permit::after{content:"";position:absolute;inset:auto -40px -60px auto;width:180px;height:180px;border-radius:50%;border:24px solid color-mix(in srgb,var(--accent) 45%,transparent)}
+.permit .mono{font-size:1.1rem;letter-spacing:.06em}
+.permit .eyebrow{color:inherit;opacity:.7}
+
+/* Results */
+.conn{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.acct{border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:10px;align-content:start}
+.acct .top{display:flex;align-items:center;gap:10px}
+.pl{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font:800 .78rem var(--f-ui);background:var(--ink);color:var(--surface);flex:none}
+.consent{border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:12px;display:grid;gap:8px;font-size:.84rem;background:var(--sunk)}
+.consent ul{margin:0;padding-inline-start:18px}
+.chart{position:relative;min-width:0}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .grid line{stroke:var(--line);stroke-width:1}
+.chart .ax{fill:var(--muted);font:11px var(--f-ui)}
+.chart .area{fill:var(--accent);opacity:.1}
+.chart .line{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.chart .dot{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+.chart .xh{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--surface);font-size:.78rem;font-weight:600;padding:6px 9px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-125%);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.vbar{height:4px;background:var(--sunk);border-radius:2px;overflow:hidden;min-width:60px}
+.vbar i{display:block;height:100%;background:var(--accent);border-radius:2px}
+td .vbar{margin-top:6px}
+.sync{font-size:.8rem;color:var(--muted)}
+@media (max-width:560px){
+  .tablewrap:has(.rtable){border:0;border-radius:0}
+  table.rtable{min-width:0}
+  .rtable thead{display:none}
+  .rtable tr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 12px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .rtable td{border:0;padding:0;text-align:start!important;background:none!important}
+  .rtable td:first-child,.rtable td.wide{grid-column:1/-1}
+  .rtable td[data-l]::before{content:attr(data-l);display:block;font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:2px}
+}
+
+/* Money timeline + ledger */
+.msteps{list-style:none;margin:0;padding:0;display:grid}
+.mstep{display:grid;grid-template-columns:26px 1fr;gap:12px;padding-bottom:16px;position:relative}
+.mstep:not(:last-child)::before{content:"";position:absolute;left:12px;top:26px;bottom:2px;width:2px;background:var(--line)}
+.mstep.done:not(:last-child)::before{background:var(--accent)}
+.mdot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.75rem;font-weight:800;background:var(--surface);border:2px solid var(--line-strong);color:var(--muted);position:relative}
+.mstep.done .mdot{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mstep.active .mdot{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.mstep > div{padding-top:3px;display:grid;gap:8px;min-width:0}
+.mstep b{font-weight:600}
+.ledger{list-style:none;margin:0;padding:0;display:grid;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.ledger li{display:grid;grid-template-columns:60px 1fr auto auto;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-size:.84rem}
+.ledger li:last-child{border-bottom:0}
+.ledger li .mono{font-family:var(--f-ui);font-size:.78rem}
+@media (max-width:560px){.ledger li{grid-template-columns:50px 1fr auto;padding:10px 12px}.ledger li .chip{display:none}}
+
+.vup{border:1px dashed var(--line-strong);border-radius:var(--r-sm);padding:12px;display:grid;gap:8px}
+.vbox{display:grid;gap:12px;border-top:1px solid var(--line);padding-top:12px}
+.thumbs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.thumbs figure{margin:0;display:grid;gap:4px}
+.thumbs img{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:6px;background:var(--sunk);border:1px solid var(--line)}
+.thumbs figcaption{font-size:.72rem;color:var(--muted);text-align:center}
+.lib{display:grid;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.librow{display:grid;grid-template-columns:28px 1fr 120px auto;gap:14px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+.librow:last-child{border-bottom:0}
+.rank{width:26px;height:26px;border-radius:50%;background:var(--sunk);display:grid;place-items:center;font-weight:800;font-size:.8rem;color:var(--muted)}
+.librow:nth-child(-n+3) .rank{background:var(--accent-soft);color:var(--accent)}
+.hookline{font-size:.84rem;color:var(--ink-2);margin-top:4px}
+.libstat{display:grid;gap:3px;font-size:.78rem}
+.libstat b{font-size:1rem}
+@media (max-width:640px){.librow{grid-template-columns:26px 1fr;}.libstat{grid-column:2;grid-template-columns:auto auto 1fr;align-items:center;gap:6px}.libstat span:last-child{grid-column:1/-1}.librow .btn{grid-column:2;justify-self:start}}
+.toast{position:fixed;inset-inline:0;bottom:calc(20px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;z-index:20;padding-inline:16px}
+.toast div{background:var(--ink);color:var(--surface);padding:11px 16px;border-radius:10px;font-size:.86rem;font-weight:600;box-shadow:0 8px 24px rgba(15,26,36,.2);max-width:520px}
+@media (prefers-reduced-motion:no-preference){.toast div{animation:up .2s ease-out}@keyframes up{from{transform:translateY(8px);opacity:0}}}
+</style>
+
+<header class="bar">
+  <div class="wrap">
+    <div class="logo"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="8" fill="var(--accent)"/><path d="M9 21V9h6.2a3.8 3.8 0 0 1 .9 7.5L20 21h-3.3l-3.6-4.3H12V21z" fill="var(--accent-ink)"/><circle cx="21.5" cy="9.5" r="2" fill="var(--saffron)"/></svg><span class="name"><b>Rawi</b><span class="ar">راوي</span></span><span class="demo">Demo</span></div>
+    <div class="seg" role="group" aria-label="View as">
+      <button id="mode-brand" data-mode="brand" aria-pressed="true">Brand</button>
+      <button id="mode-creator" data-mode="creator" aria-pressed="false">Creator</button>
+    </div>
+  </div>
+  <nav class="tabs" aria-label="Sections"><div class="wrap" id="tabs"></div></nav>
+</header>
+<div class="ctx" id="ctx" hidden><div class="wrap" id="ctx-in"></div></div>
+<main><div class="wrap" id="view"></div></main>
+<div class="toast" id="toast" hidden><div id="toast-msg"></div></div>
+
+<script>
+(() => {
+const FEE = 0.12;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const aed = n => "AED " + Math.round(n).toLocaleString("en-US");
+const isArabic = s => /[؀-ۿ]/.test(s || "");
+
+/* ---------- Sample data (invented, marked as examples in the UI) ---------- */
+const SAMPLE_GOAL = "Launch Tamrah date-and-oat bars for Ramadan. We need 30 short TikTok and Reels videos in Khaleeji Arabic for the UAE and Saudi. Focus on suhoor energy and gifting to family.";
+const SAMPLE_BRIEF = {
+  example: true,
+  title: "Tamrah Ramadan launch: suhoor energy",
+  audience: "Gulf adults 20–40 who fast, plan suhoor at home and gift sweets to family during Ramadan.",
+  dialect: "Khaleeji Arabic (Emirati and Najdi), English captions optional",
+  hooks: ["سحورك خفيف؟ هذا اللي يشبعني لين المغرب", "POV: you forgot to buy something for Taita's Ramadan visit", "3 suhoor combos under 5 minutes"],
+  deliverables: ["30 vertical videos, 15–30 seconds", "Posted on the creator's permitted account, then licensed for 90 days of paid ads", "One raw file per video, no music burned in"],
+  dos: ["Show the bar unwrapped within the first 3 seconds", "Mention the 0% added sugar line on pack", "End with the Ramadan gift box"],
+  donts: ["No health or medical claims (energy 'all day', weight loss)", "No eating on camera during fasting hours scenes", "No competitor brands in frame"],
+  compliance: ["Creator must show a valid UAE Advertiser Permit or Mawthooq number on profile", "Caption must include #إعلان or #ad", "Content follows the 20 national media content standards"],
+  budget_aed: 13500
+};
+const CREATORS = [
+  {id:"c1", name:"Noura A.", city:"Dubai", market:"UAE", dialect:"Emirati", niches:["food","family","ramadan"], rate:450, rel:96, permit:{type:"UAE Advertiser Permit", no:"ADV-2026-04812", status:"verified", exp:"2029-01"}, followers:"18K"},
+  {id:"c2", name:"Faisal K.", city:"Riyadh", market:"KSA", dialect:"Najdi", niches:["food","fitness","snacks"], rate:520, rel:91, permit:{type:"Mawthooq", no:"MW-118204", status:"verified", exp:"2028-06"}, followers:"42K"},
+  {id:"c3", name:"Reem S.", city:"Abu Dhabi", market:"UAE", dialect:"Emirati", niches:["lifestyle","ramadan","gifting"], rate:400, rel:93, permit:{type:"UAE Advertiser Permit", no:"ADV-2026-02377", status:"verified", exp:"2029-02"}, followers:"9K"},
+  {id:"c4", name:"Joud T.", city:"Jeddah", market:"KSA", dialect:"Hijazi", niches:["food","comedy"], rate:480, rel:88, permit:{type:"Mawthooq", no:"MW-097731", status:"verified", exp:"2027-11"}, followers:"27K"},
+  {id:"c5", name:"Omar H.", city:"Sharjah", market:"UAE", dialect:"Levantine", niches:["food","tech"], rate:350, rel:84, permit:{type:"UAE Advertiser Permit", no:"ADV-2026-07160", status:"verified", exp:"2029-03"}, followers:"6K"},
+  {id:"c6", name:"Priya M.", city:"Dubai", market:"UAE", dialect:"English", niches:["fitness","wellness","snacks"], rate:380, rel:90, permit:{type:"UAE Advertiser Permit", no:"ADV-2026-05529", status:"verified", exp:"2026-12"}, followers:"14K"},
+  {id:"c7", name:"Lina F.", city:"Dubai", market:"UAE", dialect:"Khaleeji / English", niches:["ramadan","food","family"], rate:420, rel:89, permit:{type:"UAE Advertiser Permit", no:"ADV-2025-00911", status:"expired", exp:"2026-08"}, followers:"21K"},
+  {id:"c8", name:"Karim B.", city:"Dubai", market:"UAE", dialect:"Egyptian", niches:["comedy","food"], rate:300, rel:79, permit:{type:"UAE Advertiser Permit", no:"", status:"pending", exp:""}, followers:"33K"}
+];
+/* How Rawi knows each creator's dialect */
+const DSRC = {c1:"voice",c2:"voice",c3:"voice",c4:"brand",c5:"voice",c6:"voice",c7:"self",c8:"self"};
+CREATORS.forEach(c => c.dialectSrc = DSRC[c.id]);
+const SRC_LABEL = {voice:"confirmed by voice check", brand:"confirmed by past brand reviews", self:"self-declared, not yet checked"};
+const verifiedDialect = c => c.dialectSrc !== "self";
+
+/* Open briefs that the creator-side matcher scores (sample) */
+const BRIEFS = [
+  {id:"j1", brand:"Tamrah", tamrah:true, markets:["UAE","KSA"], dialects:["Emirati","Najdi"], niches:["food","ramadan","family","snacks"], fee:450, videos:10, due:"2 Feb 2027"},
+  {id:"j2", brand:"Souq Cart app", title:"Grocery delivery in under 30 minutes", markets:["UAE"], dialects:["Emirati","English","Levantine"], niches:["family","food"], fee:380, videos:6, due:"20 Jan 2027"},
+  {id:"j3", brand:"Bayt Oud", title:"Eid gift sets unboxing", markets:["UAE","KSA"], dialects:["Emirati","Najdi"], niches:["gifting","lifestyle"], fee:500, videos:4, due:"5 Mar 2027"},
+  {id:"j4", brand:"Diriyah Nights", title:"Winter festival ticket launch", markets:["KSA"], dialects:["Najdi"], niches:["events","lifestyle"], fee:600, videos:5, due:"10 Dec 2026"},
+  {id:"j5", brand:"FitBox Gyms", title:"New members in January", markets:["UAE"], dialects:["English"], niches:["fitness","wellness"], fee:300, videos:8, due:"15 Jan 2027"},
+  {id:"j6", brand:"Nakhla Kitchens", title:"Iftar recipes with our spices", markets:["UAE"], dialects:["Emirati","Levantine"], niches:["food","ramadan"], fee:250, videos:6, due:"1 Feb 2027"}
+];
+
+const DRAFTS = [
+  {id:"d1", creator:"c1", text:"سحوري كل يوم صار ثلاث دقايق بس 🌙\nأفتح Tamrah، تمر وشوفان، صفر سكر مضاف.\nوهذي بوكس رمضان اللي بهديها أمي.\n#إعلان #تمرة\nتصريح معلن: ADV-2026-04812", status:"submitted"},
+  {id:"d2", creator:"c2", text:"Suhoor hack: Tamrah bar + laban. Keeps me full till maghrib.\nGrab the Ramadan box before it sells out!\n#Tamrah #Ramadan", status:"submitted"},
+  {id:"d3", creator:"c3", text:"This bar gives you energy all day and helps you lose weight during Ramadan 💪\n100% guaranteed results.\n#ad #Tamrah\nPermit ADV-2026-02377", status:"submitted"}
+];
+
+/* Posted videos and their stats (sample). start = day index within the 14-day window */
+const DAYS = Array.from({length:14},(_,i)=>{const d=new Date(Date.UTC(2026,9,3+i));return d.getUTCDate()+" Oct"});
+const VIDEOS = [
+  {id:"v1", creator:"c1", platform:"tiktok", title:"Suhoor in 3 minutes", start:0, views:184200, likes:12900, comments:640, shares:2210, watch:62},
+  {id:"v2", creator:"c1", platform:"instagram", title:"Ramadan gift box for Mama", start:1, views:41800, likes:3100, comments:210, shares:480, watch:48},
+  {id:"v3", creator:"c2", platform:"tiktok", title:"Suhoor hack with laban", start:2, views:96500, likes:5400, comments:300, shares:900, watch:51},
+  {id:"v4", creator:"c3", platform:"instagram", title:"What's in my Ramadan basket", start:4, views:23900, likes:1500, comments:90, shares:160, watch:39},
+  {id:"v5", creator:"c4", platform:"tiktok", title:"Hijazi family taste test", start:3, views:251300, likes:21800, comments:1400, shares:5200, watch:67},
+  {id:"v6", creator:"c6", platform:"instagram", title:"Pre-workout suhoor", start:6, views:12400, likes:700, comments:40, shares:60, watch:31}
+];
+const PLAT = {tiktok:{name:"TikTok", short:"TT", api:"TikTok Display API"}, instagram:{name:"Instagram", short:"IG", api:"Instagram Graph API"}};
+const BONUS_PER_K = 5, BONUS_CAP = 1000; // AED per 1,000 views, capped per video
+/* Post-level compliance as recorded when each video went live (sample) */
+const POSTCHK = {v1:{disc:true,permit:true}, v2:{disc:true,permit:true}, v3:{disc:true,permit:true}, v4:{disc:true,permit:true}, v5:{disc:true,permit:true}, v6:{disc:true,permit:true,fixed:"Disclosure missing at first; added 9 Oct after Rawi flagged it"}};
+/* Sales attributed through each creator's code and link (sample) */
+const SALES = {c1:{code:"NOURA10", orders:212, revenue:9540}, c2:{code:"FAISAL10", orders:96, revenue:4610}, c3:{code:"REEM10", orders:31, revenue:1320}, c4:{code:"JOUD10", orders:388, revenue:17850}, c6:{code:"PRIYA10", orders:14, revenue:560}, c5:{code:"OMAR10", orders:0, revenue:0}};
+const COMMISSION = 0.08, AD_FEE = 0.10;
+const AD_CPM = {tiktok:14, instagram:22}; // AED per 1,000 impressions, planning estimate
+const STORES = {shopify:"Shopify", salla:"Salla", tiktokshop:"TikTok Shop"};
+/* What-works library: patterns from past GCC campaigns in this category (sample benchmark) */
+const LIBRARY = [
+  {pattern:"Suhoor routine in under 3 minutes", hook:"سحوري كل يوم صار ثلاث دقايق بس", fmt:"POV, talking head", dialect:"Emirati", watch:64, ctr:2.9, n:9},
+  {pattern:"Family taste test, the elder's verdict comes last", hook:"خليت جدتي تحكم… والنتيجة صدمتني", fmt:"Reaction", dialect:"Hijazi / Najdi", watch:67, ctr:3.4, n:7},
+  {pattern:"Forgot the Ramadan gift, then the box reveal", hook:"POV: Taita is coming and you forgot the gift", fmt:"Skit", dialect:"Khaleeji / English", watch:58, ctr:2.6, n:5},
+  {pattern:"What's in my Ramadan basket", hook:"What's in my Ramadan basket this year", fmt:"Haul", dialect:"Any", watch:41, ctr:1.4, n:12},
+  {pattern:"Pre-workout suhoor for gym-goers", hook:"What I eat at suhoor before the gym", fmt:"Voiceover", dialect:"English", watch:33, ctr:1.1, n:6}
+];
+
+/* ---------- State ---------- */
+const store = {get(k,d){try{const v=localStorage.getItem("rawi."+k);return v==null?d:JSON.parse(v)}catch{return d}}, set(k,v){try{localStorage.setItem("rawi."+k,JSON.stringify(v))}catch{}}};
+const S = {
+  mode: store.get("mode","brand"),
+  tab: store.get("tab",{brand:"brief",creator:"jobs"}),
+  goal: SAMPLE_GOAL, markets:"UAE + KSA", budget: 13500,
+  brief: SAMPLE_BRIEF,
+  permitOnly: true,
+  invited: new Set(["c1","c2","c3","c4","c6"]),
+  contracts: {c1:{videos:3}, c2:{videos:2}, c3:{videos:2}, c4:{videos:1}, c6:{videos:1}},
+  ledger: null, stage: 0, showLedger: false,
+  drafts: DRAFTS.map(d => ({...d, ai:null})),
+  creatorDraft: "سحوري صار أخف مع Tamrah 🌙\nتمر وشوفان وصفر سكر مضاف.\n#تمرة",
+  creatorAi: null,
+  applied: new Set(),
+  aiFit: {}, aiFitErr: "",
+  voice: {status:"done", name:"intro-noura.mp4"},
+  conn: {c1:{tiktok:false,instagram:false}, c2:{tiktok:true,instagram:true}, c3:{tiktok:true,instagram:true}, c4:{tiktok:true,instagram:false}, c6:{tiktok:false,instagram:true}},
+  consent: null,
+  synced: "10:02",
+  insight: "", insightErr: "",
+  adBudget: 10000, ads: null,
+  store: null, storeConsent: null,
+  busy: {}
+};
+let sample = null, imgLimit = 0, downloads = null;
+window.claude?.use?.("sample")?.then(async s => { sample = s; if (s){ try { imgLimit = (await s.limits())?.images?.maxCount || 0; } catch {} } render(); }).catch(() => {});
+window.claude?.use?.("downloads")?.then(d => { downloads = d; render(); }).catch(() => {});
+
+/* ---------- Matching ---------- */
+function briefWords(){
+  const b = S.brief; const t = [b.title,b.audience,b.dialect,...b.hooks,...b.dos,S.goal,S.markets].join(" ").toLowerCase();
+  return t;
+}
+function match(c){
+  const t = briefWords(); let score = 40; const why = [];
+  const ksa = /ksa|saudi|السعودية|riyadh|jeddah/.test(t), uae = /uae|emirat|dubai|الإمارات|abu dhabi/.test(t);
+  if ((c.market==="UAE"&&uae)||(c.market==="KSA"&&ksa)){score+=18;why.push(c.market+" audience")}
+  const dl = c.dialect.toLowerCase();
+  const v = verifiedDialect(c), tag = v ? "" : " (self-declared)";
+  if (/khaleeji|gulf|خليج/.test(t) && /emirati|najdi|khaleeji/.test(dl)){score+= v?16:8;why.push(c.dialect+" dialect"+tag)}
+  else if (t.includes(dl.split(" ")[0])){score+= v?12:6;why.push(c.dialect+" dialect"+tag)}
+  const hits = c.niches.filter(n => t.includes(n) || (n==="snacks"&&/bar|snack/.test(t)) || (n==="gifting"&&/gift/.test(t)));
+  score += hits.length*8; if(hits.length) why.push(hits.join(", ")+" content");
+  score += Math.round((c.rel-80)/2);
+  return {score: Math.max(0,Math.min(99,score)), why};
+}
+function matchBrief(c, b){
+  const licensed = b.markets.filter(m => (m==="UAE" && c.permit.type.startsWith("UAE")) || (m==="KSA" && c.permit.type==="Mawthooq"));
+  if (c.permit.status!=="verified") return {hidden:"Your permit isn't verified"};
+  if (!licensed.length) return {hidden: b.markets.includes("KSA") ? "Needs a Saudi Mawthooq licence" : "Needs a UAE Advertiser Permit"};
+  if (b.fee < c.rate*0.75) return {hidden:"Pays well below your rate ("+aed(b.fee)+" vs "+aed(c.rate)+")"};
+  let score = 40; const why = [];
+  score += 18; why.push(licensed.join(" + ")+" audience" + (licensed.length<b.markets.length ? " (you're licensed for "+licensed.join(", ")+" posts only)" : ""));
+  if (b.dialects.some(d => c.dialect.includes(d))){ score += verifiedDialect(c)?16:8; why.push(c.dialect+" dialect"+(verifiedDialect(c)?"":" (self-declared)")); }
+  const hits = c.niches.filter(n => b.niches.includes(n)); score += hits.length*8; if (hits.length) why.push(hits.join(", ")+" content");
+  score += Math.round((c.rel-80)/2); score = Math.min(99, score);
+  if (score < 55) return {hidden:"Weak fit ("+score+"/99): "+(hits.length?"":"no topic overlap")+(b.dialects.some(d=>c.dialect.includes(d))?"":", different language")};
+  return {score, why};
+}
+const dialectChip = c => `<span class="chip ${verifiedDialect(c)?"ok":"plain"}" title="${esc(SRC_LABEL[c.dialectSrc])}">${esc(c.dialect)} · ${verifiedDialect(c)?"verified":"self-declared"}</span>`;
+const permitChip = p => p.status==="verified" ? `<span class="chip ok">${esc(p.type)} verified</span>` : p.status==="expired" ? `<span class="chip bad">Permit expired ${esc(p.exp)}</span>` : `<span class="chip warn">Permit pending</span>`;
+
+/* ---------- Local compliance rules ---------- */
+function localChecks(text, creator){
+  const t = text || ""; const out = [];
+  out.push({label:"Ad disclosure (#إعلان / #ad)", pass:/#إعلان|#اعلان|#ad\b|paid partnership/i.test(t)});
+  const permitNo = creator?.permit?.no;
+  out.push({label:"Permit number in post or profile", pass: !!permitNo && creator.permit.status==="verified"});
+  const claims = t.match(/(lose weight|weight loss|cures?|guarantee[d]?|100%|all day energy|energy all day|تخسيس|يعالج|مضمون)/gi);
+  out.push({label:"No health or guaranteed-result claims", pass:!claims, note: claims ? "Found: "+[...new Set(claims.map(x=>x.toLowerCase()))].join(", ") : ""});
+  out.push({label:"Brand name mentioned", pass:/tamrah|تمرة|تمره/i.test(t)});
+  return out;
+}
+
+/* ---------- AI calls ---------- */
+async function aiFit(){
+  if (!sample) return;
+  const pool = CREATORS.filter(c => c.permit.status==="verified");
+  const rows = pool.map(c => ({id:c.id, name:c.name, city:c.city, market:c.market, dialect:c.dialect, dialect_evidence:SRC_LABEL[c.dialectSrc], niches:c.niches, rate_aed:c.rate, on_time_pct:c.rel, followers:c.followers}));
+  S.busy.fit = "Reading the brief and every profile…"; S.aiFitErr = ""; render();
+  const b = S.brief;
+  const prompt = `You are the matchmaking agent inside Rawi, a GCC UGC creator marketplace. Score how well each creator fits this brief.
+
+BRIEF: ${b.title}
+Audience: ${b.audience}
+Dialect wanted: ${b.dialect}
+Markets: ${S.markets}
+Hooks: ${b.hooks.join(" | ")}
+Budget per creator: about ${aed((b.budget_aed||S.budget)/3)}
+
+CREATORS (JSON): ${JSON.stringify(rows)}
+
+Rules: dialect fit matters most for Arabic briefs; trust "confirmed" dialect evidence more than "self-declared". Consider niche fit, market, rate vs budget, reliability. Be specific and honest about weaknesses.
+Reply with only a JSON array, one object per creator: [{"id": string, "score": 0-99 integer, "reason": "max 22 words, why they fit or don't"}]`;
+  try {
+    const arr = await sample.json(prompt);
+    if (!Array.isArray(arr)) throw {code:"invalid_json"};
+    S.aiFit = {}; arr.forEach(x => { if (x && byId(String(x.id))) S.aiFit[x.id] = {score: Math.max(0,Math.min(99,Number(x.score)||0)), reason:String(x.reason||"")}; });
+    toast("Matches explained");
+  } catch(e){ S.aiFitErr = errCopy(e.code); }
+  S.busy.fit = ""; render();
+}
+
+const errCopy = c => ({not_granted:"Claude isn't allowed for this page. The rest of the prototype still works.", rate_limited:"Too many requests right now. Try again in a minute.", invalid_json:"Claude's answer couldn't be read. Try again.", sampling_disabled:"Claude isn't available on this account.", session_expired:"Sign in to Claude again, then retry."}[c] || "Something went wrong reaching Claude. Try again.");
+
+async function writeBrief(){
+  if (!sample) return;
+  S.busy.brief = "Writing your brief…"; render();
+  const prompt = `You are the brief-writing agent inside Rawi, a GCC UGC creator marketplace. Turn the brand's goal into a production-ready campaign brief for short-form video creators.
+
+Brand goal: ${S.goal}
+Markets: ${S.markets}
+Budget for creator fees (AED): ${S.budget}
+
+Winning patterns from past GCC campaigns in this category (average watch-through in brackets) — base at least two hooks on these:
+${LIBRARY.slice().sort((a,b)=>b.watch-a.watch).slice(0,3).map(l=>"- "+l.pattern+" ("+l.watch+"%, "+l.fmt+", "+l.dialect+")").join("\n")}
+
+Rules: write hooks in the dialect that fits the market (Arabic script for Arabic hooks). Include compliance points for UAE Advertiser Permit and/or Saudi Mawthooq as relevant to the markets, ad disclosure (#إعلان / #ad), and no unsupported health or guaranteed-result claims. Keep every list item under 18 words.
+
+Reply with only a JSON object of this shape:
+{"title": string, "audience": string, "dialect": string, "hooks": [3 strings], "deliverables": [3 strings], "dos": [3 strings], "donts": [3 strings], "compliance": [3 strings], "budget_aed": number}`;
+  try {
+    const b = await sample.json(prompt);
+    if (!b || !Array.isArray(b.hooks)) throw {code:"invalid_json"};
+    S.brief = {...SAMPLE_BRIEF, ...b, example:false};
+    S.busy.brief = ""; toast("Brief ready");
+  } catch(e){ S.busy.brief = ""; S.briefErr = errCopy(e.code); }
+  render();
+}
+
+async function aiCheck(text, creator, key){
+  if (!sample) return null;
+  S.busy[key] = "Checking against the brief and content standards…"; render();
+  const b = S.brief;
+  const prompt = `You are the compliance and draft-review agent inside Rawi, a GCC UGC creator marketplace. Review this creator's draft script/caption.
+
+BRIEF
+Title: ${b.title}
+Audience: ${b.audience}
+Dialect: ${b.dialect}
+Do: ${b.dos.join("; ")}
+Don't: ${b.donts.join("; ")}
+Compliance: ${b.compliance.join("; ")}
+
+CREATOR: ${creator?.name || "Creator"} (${creator?.market || "UAE"}, ${creator?.dialect || ""}). Permit status: ${creator?.permit?.status || "unknown"}.
+
+DRAFT:
+${text}
+
+Check: fit with the brief, hook strength in the first line, dialect match, ad disclosure, permit number display, unsupported health/guaranteed claims, and respect for UAE/Saudi media content standards (decency, religious sensitivity, no misleading claims).
+Reply with only JSON: {"score": 0-100 integer, "verdict": "approve" | "revise" | "reject", "summary": one sentence, "fixes": [up to 3 short concrete edits, in the draft's language], "rewrite": an improved version of the draft in the same language}`;
+  try {
+    const r = await sample.json(prompt);
+    S.busy[key] = ""; return r;
+  } catch(e){ S.busy[key] = ""; toast(errCopy(e.code)); return null; }
+}
+
+/* ---------- Views ---------- */
+const TABS = {
+  brand: [["brief","Campaign brief"],["creators","Creators"],["drafts","Review drafts"],["results","Results"],["sales","Sales"],["compliance","Compliance"],["escrow","Payments"]],
+  creator: [["jobs","Matched briefs"],["profile","Profile"],["submit","Submit a draft"],["wallet","Wallet & permit"]]
+};
+const byId = id => CREATORS.find(c => c.id===id);
+
+function viewBrief(){
+  const b = S.brief; const rtl = () => ' dir="auto"';
+  return `
+  <section class="panel">
+    <div class="head"><div><span class="eyebrow">Step 1 · New campaign</span><h2>Describe what you need</h2><p class="muted">One or two sentences is enough. The brief agent writes the rest.</p></div></div>
+    <label class="f" for="goal">Campaign goal<textarea id="goal" data-bind="goal">${esc(S.goal)}</textarea></label>
+    <div class="row">
+      <label class="f" for="markets">Markets<select id="markets" data-bind="markets">${["UAE","KSA","UAE + KSA","GCC-wide"].map(m=>`<option${m===S.markets?" selected":""}>${m}</option>`).join("")}</select></label>
+      <label class="f" for="budget">Creator budget (AED)<input id="budget" type="number" min="500" step="500" data-bind="budget" value="${S.budget}"></label>
+    </div>
+    <div class="actions">
+      <button class="btn primary" data-act="brief" ${!sample||S.busy.brief?"disabled":""}>${S.busy.brief?"Writing…":"Write brief with AI"}</button>
+      <span class="status${S.briefErr?" err":""}">${esc(S.busy.brief || S.briefErr || (sample?"":"AI brief writing appears when this page is opened in Claude."))}</span>
+    </div>
+  </section>
+  ${viewLibrary()}
+  <section class="panel">
+    <div class="head"><div><span class="eyebrow">Brief</span><h2>${esc(b.title)}</h2></div>${b.example?'<span class="chip sf plain">Example brief</span>':'<span class="chip ok">Written by the brief agent</span>'}</div>
+    <div class="brief">
+      <section><h3>Audience</h3><p${rtl(b.audience)}>${esc(b.audience)}</p></section>
+      <section><h3>Dialect & language</h3><p>${esc(b.dialect)}</p><dl class="kv"><dt>Suggested budget</dt><dd class="mono">${aed(b.budget_aed||S.budget)}</dd><dt>Platform fee</dt><dd class="mono">${Math.round(FEE*100)}% on creator payments</dd></dl></section>
+      <section class="full"><h3>Hooks to test</h3>${b.hooks.map(h=>`<p class="hook"${rtl(h)}>${esc(h)}</p>`).join("")}</section>
+      <section><h3>Deliverables</h3><ul>${b.deliverables.map(x=>`<li${rtl(x)}>${esc(x)}</li>`).join("")}</ul></section>
+      <section><h3>Do</h3><ul>${b.dos.map(x=>`<li${rtl(x)}>${esc(x)}</li>`).join("")}</ul></section>
+      <section><h3>Don't</h3><ul>${b.donts.map(x=>`<li${rtl(x)}>${esc(x)}</li>`).join("")}</ul></section>
+      <section class="full"><h3>Compliance</h3><ul>${b.compliance.map(x=>`<li${rtl(x)}>${esc(x)}</li>`).join("")}</ul></section>
+    </div>
+    <div class="actions"><button class="btn primary" data-go="creators">Find creators for this brief</button></div>
+  </section>`;
+}
+
+function viewCreators(){
+  const sc = x => S.aiFit[x.c.id]?.score ?? x.m.score;
+  const ranked = CREATORS.map(c => ({c, m:match(c)})).sort((a,b)=>sc(b)-sc(a));
+  const shown = ranked.filter(x => !S.permitOnly || x.c.permit.status==="verified");
+  const hidden = ranked.length - shown.length;
+  const invitedCost = Object.entries(S.contracts).reduce((s,[id,k])=>s+byId(id).rate*k.videos,0);
+  const nVideos = Object.values(S.contracts).reduce((s,k)=>s+k.videos,0);
+  return `
+  <section class="panel">
+    <div class="head"><div><span class="eyebrow">Step 2 · Shortlist</span><h2>Creators ranked for “${esc(S.brief.title)}”</h2><p class="muted">Ranked by market, dialect, niche and on-time delivery. Invited: <b>${S.invited.size}</b> · ${nVideos} videos contracted · ${aed(invitedCost)} in fees, held in escrow.</p></div><span class="chip sf plain">Sample creators</span></div>
+    <div class="actions"><button class="btn primary" data-act="aifit" ${!sample||S.busy.fit?"disabled":""}>${S.busy.fit?"Matching…":Object.keys(S.aiFit).length?"Re-run AI matching":"Explain matches with AI"}</button><span class="status${S.aiFitErr?" err":""}">${esc(S.busy.fit || S.aiFitErr || (sample?"Claude watches for dialect, niche, budget and reliability.":"AI matching appears when this page is opened in Claude. Scores below use the rules."))}</span></div>
+    <label class="check"><input type="checkbox" id="permitOnly" data-act="permitOnly" ${S.permitOnly?"checked":""}> Only show creators with a verified permit</label>
+    ${S.permitOnly && hidden ? `<p class="note">${hidden} creator${hidden>1?"s are":" is"} hidden because their permit is expired or pending. Hiring them would expose your brand to fines.</p>`:""}
+    <div class="list">
+      ${shown.map(({c,m}) => {
+        const inv = S.invited.has(c.id); const blocked = c.permit.status!=="verified";
+        return `<article class="creator${blocked?" off":""}">
+          <div class="av" aria-hidden="true">${esc(c.name[0])}</div>
+          <div style="min-width:0"><h3>${esc(c.name)} <span class="muted" style="font-weight:400;font-size:.85rem">· ${esc(c.city)} · ${esc(c.followers)} followers</span></h3>
+            <div class="meta">${permitChip(c.permit)}${dialectChip(c)}<span class="chip plain">${aed(c.rate)} / video</span><span class="chip plain">${c.rel}% on time</span></div>
+            ${S.aiFit[c.id]?`<p class="why"><span class="chip sf plain">AI</span> ${esc(S.aiFit[c.id].reason)}</p>`:`<p class="why">${m.why.length? "Fits: "+esc(m.why.join(" · ")) : "Weak fit for this brief"}</p>`}</div>
+          <div class="score"><div class="num">${S.aiFit[c.id]?.score ?? m.score}<small> ${S.aiFit[c.id]?"AI match":"match"}</small></div><div class="meter"><i style="width:${S.aiFit[c.id]?.score ?? m.score}%"></i></div>
+            <button class="btn sm ${inv?"":"primary"}" data-act="invite" data-id="${c.id}" ${blocked?"disabled":""}>${blocked?"Can't hire":inv?"Invited ✓":"Invite"}</button></div>
+        </article>`}).join("")}
+    </div>
+  </section>`;
+}
+
+function draftBlock(d){
+  const c = byId(d.creator); const lc = localChecks(d.text, c); const passed = lc.filter(x=>x.pass).length;
+  const key = "d_"+d.id; const ai = d.ai;
+  const done = d.status==="approved";
+  return `<article class="draft">
+    <div class="head"><div><h3>${esc(c.name)}</h3><span class="muted" style="font-size:.85rem">${esc(c.dialect)} · ${esc(c.city)}</span></div>
+      ${done?'<span class="chip ok">Approved · payment released</span>':d.status==="revise"?'<span class="chip warn">Sent back for edits</span>':`<span class="chip ${passed===lc.length?"ok":"warn"}">${passed}/${lc.length} rule checks pass</span>`}</div>
+    <div class="script"${isArabic(d.text)?' dir="rtl"':""}>${esc(d.text)}</div>
+    <ul class="checks">${lc.map(x=>`<li><span class="ic ${x.pass?"p":"f"}">${x.pass?"✓":"✕"}</span><span>${esc(x.label)}${x.note?` <span class="muted">— ${esc(x.note)}</span>`:""}</span></li>`).join("")}</ul>
+    ${videoBlock(d, done)}
+    ${ai?`<div class="aiout"><div class="actions"><span class="chip ${ai.verdict==="approve"?"ok":ai.verdict==="reject"?"bad":"warn"}">AI: ${esc(ai.verdict)} · ${esc(ai.score)}/100</span></div><p>${esc(ai.summary)}</p>${(ai.fixes||[]).length?`<ul class="checks">${ai.fixes.map(f=>`<li><span class="ic f">→</span><span${isArabic(f)?' dir="rtl"':""}>${esc(f)}</span></li>`).join("")}</ul>`:""}${ai.rewrite?`<details><summary class="muted" style="cursor:pointer">Suggested rewrite</summary><div class="script" style="margin-top:8px"${isArabic(ai.rewrite)?' dir="rtl"':""}>${esc(ai.rewrite)}</div></details>`:""}</div>`:""}
+    ${done?"":`<div class="actions">
+      <button class="btn" data-act="aicheck" data-id="${d.id}" ${!sample||S.busy[key]?"disabled":""}>${S.busy[key]?"Checking…":"Check with AI"}</button>
+      <button class="btn" data-act="revise" data-id="${d.id}">Send back for edits</button>
+      <button class="btn primary" data-act="approve" data-id="${d.id}" ${passed<lc.length?'title="Some rule checks fail"':""}>Approve & release ${aed(c.rate)}</button>
+      ${passed<lc.length?'<span class="status err">Approving with failed checks puts the brand at risk.</span>':""}
+    </div>`}
+  </article>`;
+}
+function viewDrafts(){
+  return `<section class="panel">
+    <div class="head"><div><span class="eyebrow">Step 3 · Review</span><h2>Drafts waiting for you</h2><p class="muted">Every draft is checked against permit, disclosure and claims rules before you see it. Claude adds a brief-fit review on request.</p></div><span class="chip sf plain">Sample drafts</span></div>
+    ${sample?"":'<p class="note">AI review appears when this page is opened in Claude. Rule checks run either way.</p>'}
+    <div class="list">${S.drafts.map(draftBlock).join("")}</div>
+  </section>`;
+}
+
+function viewEscrow(){
+  const ids = Object.keys(S.contracts); const rows = ids.map(creatorMoney);
+  const funded = sumL("fund"), paidFees = sumL("release"), paidBonus = sumL("bonus"), returned = sumL("refund");
+  const feeNet = sumL("fee") - sumL("feerefund"), held = funded - paidFees - paidBonus - returned;
+  const pending = S.drafts.filter(d=>d.status==="submitted").length;
+  const st = S.stage;
+  const step = (n, label, done, active, btn) => `<li class="mstep${done?" done":""}${active?" active":""}"><span class="mdot">${done?"✓":n}</span><div><b>${label}</b>${btn||""}</div></li>`;
+  return `<section class="panel">
+    <div class="head"><div><span class="eyebrow">Step 5 · Escrow</span><h2>Payments</h2><p class="muted">The brand pays up front into escrow. Creators are paid from it: fees on approval, view bonuses on day 7 and day 30. Whatever isn't earned returns to the brand.</p></div><span class="chip sf plain">Simulated money</span></div>
+    <div class="stats">
+      <div class="stat"><span class="eyebrow">Brand funded</span><b>${aed(funded)}</b><span class="muted" style="font-size:.8rem">fees + bonus caps</span></div>
+      <div class="stat"><span class="eyebrow">Paid to creators</span><b>${aed(paidFees+paidBonus)}</b><span class="muted" style="font-size:.8rem">${aed(paidFees)} fees · ${aed(paidBonus)} bonuses</span></div>
+      <div class="stat"><span class="eyebrow">${st==="closed"?"Returned to brand":"Held in escrow"}</span><b>${aed(st==="closed"?returned:held)}</b><span class="muted" style="font-size:.8rem">${st==="closed"?"escrow now empty":"until earned or returned"}</span></div>
+      <div class="stat"><span class="eyebrow">Rawi fee (${Math.round(FEE*100)}%)</span><b>${aed(feeNet)}</b><span class="muted" style="font-size:.8rem">${st==="closed"?"on delivered videos only":"on contracted fees · refunded for unused slots"}</span></div>
+    </div>
+    <div style="display:grid;gap:8px"><h3>Campaign timeline</h3>
+    <ol class="msteps">
+      ${step(1,"Funded · 3 Oct", true, false)}
+      ${step(2,"Fees paid on each approval", true, false, pending?` <span class="muted">· ${pending} draft${pending>1?"s":""} waiting in Review drafts</span>`:"")}
+      ${step(3,"Day 7 · first view bonus", st===7||st===30||st==="closed", st===0, st===0?`<div class="actions"><button class="btn sm primary" data-act="bonus7">Run day-7 bonus payout</button></div>`:"")}
+      ${step(4,"Day 30 · final view bonus", st===30||st==="closed", st===7, st===7?`<div class="actions"><button class="btn sm primary" data-act="bonus30">Run day-30 bonus payout</button></div>`:"")}
+      ${step(5,"Close · return the rest to the brand", st==="closed", st===30, st===30?`<div class="actions"><button class="btn sm primary" data-act="close">Close campaign</button></div><p class="muted" style="font-size:.8rem">Pending drafts are auto-approved, as they would be after 5 working days.</p>`:"")}
+    </ol></div>
+    <div class="tablewrap"><table class="rtable"><thead><tr><th>Creator</th><th class="num">Videos</th><th class="num">Fees paid</th><th class="num">Bonus paid</th><th class="num">${st==="closed"?"Returned":"Held"}</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr><td><b>${esc(r.c.name)}</b><br><span class="muted" style="font-size:.8rem">${aed(r.c.rate)}/video · bonus cap ${aed(BONUS_CAP)}/video</span></td><td class="num" data-l="Approved">${r.approved}/${r.videos}</td><td class="num" data-l="Fees paid">${aed(r.fees)}</td><td class="num" data-l="Bonus paid">${aed(r.bonus)}</td><td class="num" data-l="${st==="closed"?"Returned":"Held"}">${aed(st==="closed"?r.returned:r.held)}</td></tr>`).join("")}</tbody></table></div>
+    <div style="display:grid;gap:8px">
+      <div class="head"><h3>Ledger</h3><button class="btn sm" data-act="ledger">${S.showLedger?"Hide entries":"Show all "+L().length+" entries"}</button></div>
+      ${S.showLedger?`<ul class="ledger">${L().slice().reverse().map(e=>`<li><span class="mono muted">${esc(e.date)}</span><span>${esc(e.text)}</span><span class="chip ${EV[e.type][1]}${EV[e.type][1]==="plain"?" plain":""}">${EV[e.type][0]}</span><span class="mono num">${aed(e.amount)}</span></li>`).join("")}</ul>`:""}
+    </div>
+    <p class="muted" style="font-size:.82rem">Bonuses only count views TikTok or Instagram report through the creator's connected account. A video whose creator never connects earns no bonus, and its cap returns to the brand. In production a licensed payment provider holds the money; Rawi keeps this ledger and instructs each transfer.</p>
+  </section>`;
+}
+
+/* ---------- Money engine: escrow ledger ----------
+   Brand funds fixed fees + bonus caps into escrow (+ Rawi fee).
+   Fees release on approval; bonuses pay at day 7 and day 30 from verified views; the rest returns to the brand at close. */
+const BONUS_STAGES = {7:0.7, 30:1};            // share of final views counted at each payout
+function L(){ if (!S.ledger) S.ledger = initLedger(); return S.ledger; }
+function initLedger(){
+  const ev = []; let fees = 0, caps = 0, n = 0;
+  for (const [id,k] of Object.entries(S.contracts)){ const c=byId(id); fees += c.rate*k.videos; caps += BONUS_CAP*k.videos; n += k.videos; }
+  ev.push({date:"3 Oct", type:"fund", text:`Brand funded escrow for ${n} videos: fees ${aed(fees)} + bonus caps ${aed(caps)}`, amount:fees+caps});
+  ev.push({date:"3 Oct", type:"fee", text:`Rawi fee charged (${Math.round(FEE*100)}% of creator fees)`, amount:fees*FEE});
+  VIDEOS.slice().sort((a,b)=>a.start-b.start).forEach(v => { const c=byId(v.creator); ev.push({date:DAYS[v.start], type:"release", creator:c.id, vid:v.id, text:`Fee released to ${c.name}: “${v.title}” approved`, amount:c.rate}); });
+  return ev;
+}
+const sumL = (type, cid, vid) => L().filter(e => e.type===type && (!cid || e.creator===cid) && (!vid || e.vid===vid)).reduce((s,e)=>s+e.amount,0);
+const countL = (type, cid) => L().filter(e => e.type===type && e.creator===cid).length;
+function topUp(cid, n, why){
+  const c = byId(cid);
+  L().push({date:"Today", type:"fund", creator:cid, text:`Escrow top-up for ${c.name}: ${n} video${n>1?"s":""} (${why})`, amount:n*(c.rate+BONUS_CAP)});
+  L().push({date:"Today", type:"fee", creator:cid, text:`Rawi fee on ${c.name}'s top-up`, amount:n*c.rate*FEE});
+}
+function creatorMoney(cid){
+  const c = byId(cid), k = S.contracts[cid]; if (!k) return null;
+  const funded = k.videos*(c.rate+BONUS_CAP), fees = sumL("release",cid), bonus = sumL("bonus",cid), returned = sumL("refund",cid);
+  return {c, videos:k.videos, approved:countL("release",cid), funded, fees, bonus, returned, held: funded-fees-bonus-returned};
+}
+function approveDraft(d, auto){
+  const c = byId(d.creator);
+  if (!S.contracts[c.id]){ S.contracts[c.id] = {videos:0}; S.invited.add(c.id); }
+  if (countL("release",c.id) >= S.contracts[c.id].videos){ topUp(c.id, 1, "extra video"); S.contracts[c.id].videos++; }
+  d.status = "approved"; d.issues = localChecks(d.text, c).filter(x=>!x.pass).map(x=>x.label);
+  if (d.vai && d.vai.checks) d.issues.push(...d.vai.checks.filter(x=>!x.pass).map(x=>"Video: "+x.label));
+  L().push({date:"Today", type:"release", creator:c.id, text:`Fee released to ${c.name}: draft ${auto?"auto-approved after 5 working days":"approved by brand"}`, amount:c.rate});
+}
+function runBonus(day){
+  const frac = BONUS_STAGES[day]; let total = 0; const skipped = [];
+  VIDEOS.filter(v => S.contracts[v.creator]).forEach(v => {
+    const c = byId(v.creator);
+    if (!isLive(v)){ skipped.push(`${c.name} (${PLAT[v.platform].name} not connected)`); return; }
+    const target = Math.min(BONUS_CAP, Math.round(v.views*frac/1000*BONUS_PER_K));
+    const pay = target - sumL("bonus", c.id, v.id);
+    if (pay > 0){ total += pay; L().push({date:`Day ${day}`, type:"bonus", creator:c.id, vid:v.id, text:`Day-${day} view bonus to ${c.name}: ${fmt(v.views*frac)} verified views on “${v.title}”`, amount:pay}); }
+  });
+  S.stage = day;
+  return {total, skipped};
+}
+function closeCampaign(){
+  S.drafts.filter(d=>d.status==="submitted").forEach(d => approveDraft(d, true));
+  let refund = 0, feeBack = 0;
+  for (const cid of Object.keys(S.contracts)){
+    const m = creatorMoney(cid); const unusedSlots = m.videos - m.approved;
+    if (m.held > 0){ refund += m.held; L().push({date:"Day 30", type:"refund", creator:cid, text:`Returned to brand from ${m.c.name}: ${unusedSlots>0?unusedSlots+" unused video slot"+(unusedSlots>1?"s":"")+" + ":""}unused bonus cap`, amount:m.held}); }
+    if (unusedSlots > 0) feeBack += unusedSlots*m.c.rate*FEE;
+  }
+  if (feeBack > 0) L().push({date:"Day 30", type:"feerefund", text:`Rawi fee refunded on unused video slots`, amount:feeBack});
+  S.stage = "closed";
+  return refund + feeBack;
+}
+const EV = {fund:["Funded","plain","+"], fee:["Rawi fee","plain",""], release:["Fee paid","ok","−"], bonus:["Bonus paid","ok","−"], refund:["Returned","sf","−"], feerefund:["Fee refund","sf",""]};
+
+/* ---------- Results (tracking) ---------- */
+const fmt = n => Math.round(n).toLocaleString("en-US");
+const isLive = v => !!S.conn[v.creator]?.[v.platform];
+function videoStats(v){
+  const c = byId(v.creator); const eng = (v.likes+v.comments+v.shares)/v.views;
+  const cpm = c.rate / v.views * 1000; const bonus = Math.min(BONUS_CAP, v.views/1000*BONUS_PER_K);
+  const rec = (v.watch>=55 && eng>=0.07) ? {t:"Boost as ad", k:"ok"} : v.views<30000 ? {t:"Keep organic", k:"plain"} : {t:"Rehire creator", k:"sf"};
+  return {c, eng, cpm, bonus, rec};
+}
+function dailySeries(vids){
+  const out = DAYS.map(()=>0);
+  vids.forEach(v => {
+    const w = DAYS.map((_,d)=> d<v.start?0:Math.exp(-(d-v.start)/3)); const sum = w.reduce((a,b)=>a+b,0);
+    w.forEach((x,d)=> out[d] += v.views*x/sum);
+  });
+  return out.map(Math.round);
+}
+function niceStep(max){const raw=max/4;const p=Math.pow(10,Math.floor(Math.log10(raw)));const m=raw/p;return (m<=1?1:m<=2?2:m<=5?5:10)*p}
+function lineChart(series){
+  const W=(innerWidth<560?360:640),H=220,L=44,R=12,T=12,B=28; const max=Math.max(...series,1); const step=niceStep(max); const top=Math.ceil(max/step)*step;
+  const x=i=>L+(W-L-R)*i/(series.length-1), y=v=>T+(H-T-B)*(1-v/top);
+  const pts=series.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+  const ticks=[];for(let v=0;v<=top;v+=step)ticks.push(v);
+  const k=v=>v>=1000?(v/1000)+"K":String(v);
+  const last=series.length-1;
+  return `<div class="chart" id="chart" data-w="${W}" data-series="${series.join(",")}">
+  <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Daily views across connected videos, ${DAYS[0]} to ${DAYS[last]}">
+    <g class="grid">${ticks.map(v=>`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}"/>`).join("")}</g>
+    ${ticks.map(v=>`<text class="ax" x="${L-8}" y="${y(v)+4}" text-anchor="end">${k(v)}</text>`).join("")}
+    ${(W<500?[0,6,last]:[0,4,8,last]).map(i=>`<text class="ax" x="${x(i)}" y="${H-8}" text-anchor="${i===0?"start":i===last?"end":"middle"}">${DAYS[i]}</text>`).join("")}
+    <polygon class="area" points="${L},${y(0)} ${pts} ${x(last)},${y(0)}"/>
+    <polyline class="line" points="${pts}"/>
+    <circle class="dot" cx="${x(last)}" cy="${y(series[last])}" r="4"/>
+    <line class="xh" id="xh" x1="0" x2="0" y1="${T}" y2="${H-B}" visibility="hidden"/>
+    <circle class="dot" id="hd" r="5" cx="0" cy="0" visibility="hidden"/>
+    <rect id="hit" x="${L}" y="0" width="${W-L-R}" height="${H}" fill="transparent"/>
+  </svg><div class="tip" id="tip" hidden></div></div>`;
+}
+function viewResults(){
+  const live = VIDEOS.filter(isLive), waiting = VIDEOS.filter(v=>!isLive(v));
+  const st = live.map(v=>({v,...videoStats(v)}));
+  const views = live.reduce((s,v)=>s+v.views,0);
+  const spend = st.reduce((s,x)=>s+x.c.rate,0);
+  const bonus = st.reduce((s,x)=>s+x.bonus,0);
+  const eng = views? live.reduce((s,v)=>s+v.likes+v.comments+v.shares,0)/views : 0;
+  const maxV = Math.max(...live.map(v=>v.views),1);
+  const byPlat = p => live.filter(v=>v.platform===p).reduce((s,v)=>s+v.views,0);
+  return `<section class="panel">
+    <div class="head"><div><span class="eyebrow">Step 4 · Results</span><h2>How the Tamrah videos are doing</h2><p class="sync">Synced from TikTok and Instagram at ${esc(S.synced)} · ${live.length} of ${VIDEOS.length} videos reporting</p></div>
+      <div class="actions"><span class="chip sf plain">Sample data</span><button class="btn sm" data-act="sync">Sync now</button></div></div>
+    <div class="stats">
+      <div class="stat"><span class="eyebrow">Views</span><b>${fmt(views)}</b><span class="muted" style="font-size:.8rem">TikTok ${fmt(byPlat("tiktok"))} · IG ${fmt(byPlat("instagram"))}</span></div>
+      <div class="stat"><span class="eyebrow">Engagement rate</span><b>${(eng*100).toFixed(1)}%</b><span class="muted" style="font-size:.8rem">likes + comments + shares</span></div>
+      <div class="stat"><span class="eyebrow">Cost per 1,000 views</span><b>${views?"AED "+(spend/views*1000).toFixed(2):"—"}</b><span class="muted" style="font-size:.8rem">${aed(spend)} creator fees</span></div>
+      <div class="stat"><span class="eyebrow">View bonuses earned</span><b>${aed(bonus)}</b><span class="muted" style="font-size:.8rem">${aed(sumL("bonus"))} paid so far · paid day 7 & day 30</span></div>
+    </div>
+    <div style="display:grid;gap:6px"><h3>Daily views</h3>${live.length?lineChart(dailySeries(live)):'<p class="muted">No connected videos yet.</p>'}</div>
+    <div class="tablewrap"><table class="rtable"><thead><tr><th>Video</th><th>Platform</th><th class="num">Views</th><th class="num">Eng.</th><th class="num">Watched</th><th class="num">CPM</th><th>Next step</th></tr></thead><tbody>
+      ${st.sort((a,b)=>b.v.views-a.v.views).map(x=>`<tr><td><b>${esc(x.v.title)}</b><br><span class="muted" style="font-size:.8rem">${esc(x.c.name)}</span></td><td data-l="Platform">${PLAT[x.v.platform].name}</td><td class="num" data-l="Views">${fmt(x.v.views)}<div class="vbar"><i style="width:${(x.v.views/maxV*100).toFixed(1)}%"></i></div></td><td class="num" data-l="Engagement">${(x.eng*100).toFixed(1)}%</td><td class="num" data-l="Watched">${x.v.watch}%</td><td class="num" data-l="CPM (AED)">${x.cpm.toFixed(1)}</td><td data-l="Next step"><span class="chip ${x.rec.k}${x.rec.k==="plain"?" plain":""}">${x.rec.t}</span></td></tr>`).join("")}
+      ${waiting.map(v=>`<tr><td><b>${esc(v.title)}</b><br><span class="muted" style="font-size:.8rem">${esc(byId(v.creator).name)}</span></td><td data-l="Platform">${PLAT[v.platform].name}</td><td colspan="5" class="wide"><span class="chip warn">Waiting for creator to connect ${PLAT[v.platform].name}</span></td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="muted" style="font-size:.8rem">CPM = creator fee per 1,000 views, in AED. Watched = average share of the video watched. “Boost as ad” means watch-through 55%+ and engagement 7%+.</p>
+    <div class="aiout">
+      <div class="actions"><button class="btn primary" data-act="insight" ${!sample||S.busy.insight?"disabled":""}>${S.busy.insight?"Analysing…":"Ask the agent what to do next"}</button><span class="status${S.insightErr?" err":""}">${esc(S.insightErr || (sample?"":"Agent analysis appears when this page is opened in Claude."))}</span></div>
+      ${S.insight?`<div class="script" style="white-space:pre-wrap">${esc(S.insight)}</div>`:""}
+    </div>
+  </section>`;
+}
+
+/* ===== 3. AI video review ===== */
+async function extractFrames(file){
+  const url = URL.createObjectURL(file);
+  try {
+    const v = document.createElement("video"); v.muted = true; v.playsInline = true; v.preload = "auto"; v.src = url;
+    await new Promise((res, rej) => { v.onloadeddata = res; v.onerror = () => rej(new Error("This video format can't be read here. Try an MP4.")); });
+    const d = v.duration && isFinite(v.duration) ? v.duration : 4;
+    const times = [Math.min(0.6, d*0.1), d*0.35, d*0.65, Math.max(0, d-0.4)];
+    const c = document.createElement("canvas"); const w = 360, h = Math.round((v.videoHeight||640)/(v.videoWidth||360)*w);
+    c.width = w; c.height = h; const g = c.getContext("2d"); const blobs = [], thumbs = [];
+    for (const t of times){
+      await new Promise(res => { v.onseeked = res; v.currentTime = t; });
+      g.drawImage(v, 0, 0, w, h);
+      thumbs.push(c.toDataURL("image/jpeg", .7));
+      blobs.push(await new Promise(res => c.toBlob(res, "image/jpeg", .8)));
+    }
+    return {name:file.name, duration:d, vw:v.videoWidth, vh:v.videoHeight, blobs, thumbs, times};
+  } finally { URL.revokeObjectURL(url); }
+}
+function videoLocalChecks(vd){
+  const ratio = vd.vw && vd.vh ? vd.vh/vd.vw : 0;
+  return [
+    {label:"Vertical 9:16", pass: ratio > 1.6 && ratio < 1.9, note: vd.vw ? vd.vw+"×"+vd.vh : ""},
+    {label:"Length 15–60 seconds", pass: vd.duration >= 15 && vd.duration <= 60, note: vd.duration.toFixed(1)+" s"}
+  ];
+}
+function videoBlock(d, done){
+  const vd = d.video, key = "v_"+d.id, vai = d.vai;
+  if (!vd) return done ? "" : `<div class="vup"><label class="f" for="vid_${d.id}">Draft video <span class="muted" style="font-weight:500">· MP4 or MOV, the agent reviews 4 frames plus the caption</span><input type="file" id="vid_${d.id}" data-vid="${d.id}" accept="video/*"></label>${S.busy[key]?`<span class="status">${esc(S.busy[key])}</span>`:""}</div>`;
+  const lc = videoLocalChecks(vd);
+  return `<div class="vbox">
+    <div class="thumbs">${vd.thumbs.map((t,i)=>`<figure><img src="${t}" alt="Frame at ${vd.times[i].toFixed(1)} seconds"><figcaption>${i===0?"Hook · ":""}${vd.times[i].toFixed(1)}s</figcaption></figure>`).join("")}</div>
+    <ul class="checks">${lc.map(x=>`<li><span class="ic ${x.pass?"p":"f"}">${x.pass?"✓":"✕"}</span><span>${esc(x.label)} <span class="muted">— ${esc(x.note)}</span></span></li>`).join("")}</ul>
+    ${vai?`<div class="aiout"><div class="actions"><span class="chip ${vai.verdict==="approve"?"ok":vai.verdict==="reject"?"bad":"warn"}">Video AI: ${esc(vai.verdict)} · ${esc(vai.score)}/100</span></div><p>${esc(vai.summary)}</p>
+      <ul class="checks">${(vai.checks||[]).map(x=>`<li><span class="ic ${x.pass?"p":"f"}">${x.pass?"✓":"✕"}</span><span>${esc(x.label)}${x.note?` <span class="muted">— ${esc(x.note)}</span>`:""}</span></li>`).join("")}</ul>
+      ${(vai.fixes||[]).length?`<ul class="checks">${vai.fixes.map(f=>`<li><span class="ic f">→</span><span dir="auto">${esc(f)}</span></li>`).join("")}</ul>`:""}</div>`:""}
+    ${done?"":`<div class="actions"><button class="btn" data-act="vidai" data-id="${d.id}" ${!sample||!imgLimit||S.busy[key]?"disabled":""}>${S.busy[key]?"Watching…":"Review video with AI"}</button><button class="btn sm" data-act="vidclear" data-id="${d.id}">Remove video</button><span class="status">${esc(S.busy[key]||(!sample||!imgLimit?"Video AI appears when this page is opened in Claude.":""))}</span></div>`}
+  </div>`;
+}
+async function reviewVideo(d){
+  const vd = d.video, c = byId(d.creator), key = "v_"+d.id, b = S.brief;
+  S.busy[key] = "Watching the frames…"; render();
+  const prompt = `You are the video-review agent inside Rawi, a GCC UGC creator marketplace. The images are ${vd.blobs.slice(0,imgLimit).length} frames from a creator's draft video, in order, taken at ${vd.times.map(t=>t.toFixed(1)+"s").join(", ")} of a ${vd.duration.toFixed(1)}s video. The first frame is the hook.
+
+BRIEF: ${b.title}. Do: ${b.dos.join("; ")}. Don't: ${b.donts.join("; ")}.
+CREATOR: ${c.name}, ${c.market}. Permit number: ${c.permit.no||"none"}.
+CAPTION / SCRIPT: ${d.text}
+
+Check from what is visible: (1) Hook: does frame 1 show the product, a face speaking to camera, or a striking visual? (2) Product clearly visible in at least one frame. (3) On-screen text or subtitles present. (4) Ad disclosure (#إعلان / #ad) or permit number visible on screen or in the caption. (5) UAE/Saudi content standards: modest dress, no alcohol, gambling, or misuse of religious symbols or national emblems. (6) No competitor brands visible. If something can't be judged from still frames, say so in the note and mark pass false only when there is a visible problem or clear absence.
+Reply with only JSON: {"score": 0-100 integer, "verdict": "approve"|"revise"|"reject", "summary": one sentence, "checks": [{"label": string, "pass": boolean, "note": short string}], "fixes": [up to 3 short concrete edits]}`;
+  try {
+    const r = await sample.json(prompt, {images: vd.blobs.slice(0, imgLimit), modelTier:"default"});
+    if (!r || !Array.isArray(r.checks)) throw {code:"invalid_json"};
+    d.vai = r;
+  } catch(e){ toast(e.code==="image_rejected"?"Claude couldn't read these frames. Try another clip.":errCopy(e.code)); }
+  S.busy[key] = ""; render();
+}
+
+/* ===== 5. What-works library ===== */
+function viewLibrary(){
+  const own = VIDEOS.filter(isLive).sort((a,b)=>b.watch-a.watch)[0];
+  const sorted = LIBRARY.slice().sort((a,b)=>b.watch-a.watch);
+  return `<section class="panel">
+    <div class="head"><div><span class="eyebrow">What works in the Gulf · Food & snacks, Ramadan</span><h2>Proven hooks for this brief</h2><p class="muted">Patterns ranked by average watch-through across past GCC campaigns. The brief agent uses the top three when it writes your hooks.</p></div><span class="chip sf plain">Sample benchmark · 42 campaigns</span></div>
+    <div class="lib">${sorted.map((l,i)=>`<div class="librow">
+      <div class="rank">${i+1}</div>
+      <div style="min-width:0"><b>${esc(l.pattern)}</b><p class="muted" style="font-size:.82rem">${esc(l.fmt)} · ${esc(l.dialect)} · ${l.n} campaigns</p><p class="hookline" dir="auto">${esc(l.hook)}</p></div>
+      <div class="libstat"><span class="num"><b>${l.watch}%</b></span><span class="muted">watched</span><div class="vbar"><i style="width:${l.watch}%"></i></div><span class="muted" style="font-size:.75rem">${l.ctr}% click-through</span></div>
+      <button class="btn sm" data-act="usehook" data-i="${LIBRARY.indexOf(l)}" ${S.brief.hooks.includes(l.hook)?"disabled":""}>${S.brief.hooks.includes(l.hook)?"In brief":"Add to brief"}</button>
+    </div>`).join("")}</div>
+    ${own?`<p class="note">Learning from this campaign: <b>${esc(own.title)}</b> by ${esc(byId(own.creator).name)} holds ${own.watch}% watch-through. It joins the library when the campaign closes.</p>`:""}
+  </section>`;
+}
+
+/* ===== 1. Ad boosting ===== */
+function boostPlan(){
+  const cands = VIDEOS.filter(isLive).map(v => ({v, ...videoStats(v)})).filter(x => x.v.watch >= 45);
+  const w = cands.map(x => x.v.watch * x.eng * Math.sqrt(x.v.views)); const tot = w.reduce((a,b)=>a+b,0) || 1;
+  return cands.map((x,i) => { const spend = Math.round(S.adBudget * w[i]/tot / 50) * 50; const imp = spend / AD_CPM[x.v.platform] * 1000;
+    return {v:x.v, c:x.c, spend, imp, views: imp * x.v.watch/100 * 0.55, type: x.v.platform==="tiktok" ? "Spark Ads" : "Partnership ad"}; }).filter(x=>x.spend>0);
+}
+function viewBoost(){
+  const live = S.ads; const plan = live || boostPlan();
+  const spend = plan.reduce((s,x)=>s+x.spend,0), imp = plan.reduce((s,x)=>s+x.imp,0), fee = spend*AD_FEE;
+  return `<section class="panel">
+    <div class="head"><div><span class="eyebrow">Boost winners</span><h2>${live?"Your boosted videos":"Turn the best videos into ads"}</h2><p class="muted">Rawi runs the winners as TikTok Spark Ads and Instagram partnership ads from your ad accounts. The post stays on the creator's permitted profile, which keeps it compliant.</p></div>${live?'<span class="chip ok">Live · simulated</span>':'<span class="chip sf plain">Estimates</span>'}</div>
+    ${live?"":`<div class="row" style="align-items:end"><label class="f" for="adBudget">Ad budget (AED)<input id="adBudget" type="number" min="1000" step="500" data-bind="adBudget" data-rerender="1" value="${S.adBudget}"></label><div class="status" style="flex:2 1 260px">Split by watch-through, engagement and reach. Only videos with 45%+ watch-through qualify.</div></div>`}
+    <div class="stats">
+      <div class="stat"><span class="eyebrow">Ad spend</span><b>${aed(spend)}</b><span class="muted">${plan.length} videos</span></div>
+      <div class="stat"><span class="eyebrow">Est. impressions</span><b>${fmt(imp)}</b><span class="muted">TikTok ~AED ${AD_CPM.tiktok}, IG ~AED ${AD_CPM.instagram} per 1,000</span></div>
+      <div class="stat"><span class="eyebrow">Rawi ad fee (${Math.round(AD_FEE*100)}%)</span><b>${aed(fee)}</b><span class="muted">billed with ad spend</span></div>
+    </div>
+    <div class="tablewrap"><table class="rtable"><thead><tr><th>Video</th><th>Ad type</th><th class="num">Spend</th><th class="num">Est. impressions</th><th class="num">Est. views</th></tr></thead><tbody>
+      ${plan.map(x=>`<tr><td><b>${esc(x.v.title)}</b><br><span class="muted" style="font-size:.8rem">${esc(x.c.name)} · ${x.v.watch}% watched</span></td><td data-l="Ad type">${x.type}</td><td class="num" data-l="Spend">${aed(x.spend)}</td><td class="num" data-l="Impressions">${fmt(x.imp)}</td><td class="num" data-l="Views">${fmt(x.views)}</td></tr>`).join("")}
+    </tbody></table></div>
+    <div class="actions">${live?`<button class="btn" data-act="adstop">Pause all boosts</button><span class="status">Creators approved each boost through their Spark Ads code or partnership request.</span>`:`<button class="btn primary" data-act="adlaunch" ${plan.length?"":"disabled"}>Launch ${plan.length} boosts · ${aed(spend+fee)}</button><span class="status">Each creator gets a request to authorise their post as an ad.</span>`}</div>
+  </section>`;
+}
+
+/* ===== 2. Sales tracking ===== */
+function viewSales(){
+  const ids = Object.keys(S.contracts).filter(id => SALES[id]);
+  const st = S.store;
+  const rows = ids.map(id => { const c = byId(id), sd = SALES[id], paid = sumL("release",id)+sumL("bonus",id); return {c, ...sd, paid, roas: paid? sd.revenue/paid : 0, comm: sd.revenue*COMMISSION}; }).sort((a,b)=>b.revenue-a.revenue);
+  const rev = rows.reduce((s,r)=>s+r.revenue,0), orders = rows.reduce((s,r)=>s+r.orders,0), paid = rows.reduce((s,r)=>s+r.paid,0), comm = rows.reduce((s,r)=>s+r.comm,0);
+  const maxR = Math.max(...rows.map(r=>r.revenue),1);
+  return `<section class="panel">
+    <div class="head"><div><span class="eyebrow">Sales</span><h2>${st?"Sales driven by each creator":"Connect your store to track sales"}</h2><p class="muted">Every creator gets a discount code and a tracked link. Orders that use them are credited to that creator, so you see revenue per creator, not just views.</p></div>${st?`<span class="chip ok">${STORES[st]} connected</span>`:""}</div>
+    ${st?`<div class="stats">
+      <div class="stat"><span class="eyebrow">Revenue</span><b>${aed(rev)}</b><span class="muted">${fmt(orders)} orders</span></div>
+      <div class="stat"><span class="eyebrow">Return on creator spend</span><b>${paid?(rev/paid).toFixed(1)+"×":"—"}</b><span class="muted">revenue ÷ ${aed(paid)} paid</span></div>
+      <div class="stat"><span class="eyebrow">Creator commission (${Math.round(COMMISSION*100)}%)</span><b>${aed(comm)}</b><span class="muted">paid monthly from escrow</span></div>
+    </div>
+    <div class="tablewrap"><table class="rtable"><thead><tr><th>Creator</th><th>Code</th><th class="num">Orders</th><th class="num">Revenue</th><th class="num">Return</th><th class="num">Commission</th></tr></thead><tbody>
+      ${rows.map(r=>`<tr><td><b>${esc(r.c.name)}</b></td><td data-l="Code" class="mono">${r.code}</td><td class="num" data-l="Orders">${fmt(r.orders)}</td><td class="num" data-l="Revenue">${aed(r.revenue)}<div class="vbar"><i style="width:${(r.revenue/maxR*100).toFixed(1)}%"></i></div></td><td class="num" data-l="Return">${r.roas?r.roas.toFixed(1)+"×":"—"}</td><td class="num" data-l="Commission">${aed(r.comm)}</td></tr>`).join("")}
+    </tbody></table></div>
+    <div class="actions"><button class="btn sm" data-act="storeoff">Disconnect ${STORES[st]}</button><span class="status">Sample orders. In production, orders arrive through the store's API in near real time.</span></div>`
+    : S.storeConsent ? `<div class="consent"><b>Rawi wants to read orders from your ${STORES[S.storeConsent]} store</b><ul><li>Orders that used a Rawi creator code or link</li><li>Order value and date, never customer names or addresses</li></ul><div class="actions"><button class="btn sm primary" data-act="storeallow">Allow</button><button class="btn sm" data-act="storecancel">Cancel</button></div></div>`
+    : `<div class="actions">${Object.entries(STORES).map(([k,n])=>`<button class="btn" data-act="storeask" data-s="${k}">Connect ${n}</button>`).join("")}</div>
+       <div class="tablewrap"><table><thead><tr><th>Creator</th><th>Discount code</th><th>Tracked link</th></tr></thead><tbody>${ids.map(id=>`<tr><td>${esc(byId(id).name)}</td><td class="mono">${SALES[id].code}</td><td class="mono" style="font-size:.8rem">rawi.link/tamrah/${SALES[id].code.toLowerCase()}</td></tr>`).join("")}</tbody></table></div>`}
+  </section>`;
+}
+
+/* ===== 4. Compliance ===== */
+const monthsLeft = exp => { if (!exp) return -99; const [y,m] = exp.split("-").map(Number); return (y-2026)*12 + (m-10); };
+function complianceData(){
+  const creators = Object.keys(S.contracts).map(id => { const c = byId(id), ml = monthsLeft(c.permit.exp);
+    const state = c.permit.status!=="verified" || ml < 0 ? "bad" : ml <= 3 ? "warn" : "ok";
+    return {c, ml, state, label: state==="bad"?"Not valid":state==="warn"?`Expires ${c.permit.exp}`:"Valid"}; });
+  const posts = [
+    ...VIDEOS.filter(v=>S.contracts[v.creator]).map(v => { const k = POSTCHK[v.id]; return {title:v.title, c:byId(v.creator), where:PLAT[v.platform].name, disc:k.disc, permit:k.permit, claims:true, state:k.fixed?"fixed":"ok", note:k.fixed||""}; }),
+    ...S.drafts.filter(d=>d.status==="approved").map(d => { const c = byId(d.creator); const lc = localChecks(d.text, c); const iss = d.issues || [];
+      return {title:"Approved draft", c, where:"Draft", disc:lc[0].pass, permit:lc[1].pass, claims:lc[2].pass, state: iss.length?"bad":"ok", note: iss.length?"Approved with failed checks: "+iss.join(", "):""}; })
+  ];
+  const issues = creators.filter(x=>x.state==="bad").length + posts.filter(p=>p.state==="bad").length;
+  const alerts = creators.filter(x=>x.state==="warn");
+  return {creators, posts, issues, alerts};
+}
+function viewCompliance(){
+  const D = complianceData();
+  const okC = D.creators.filter(x=>x.state!=="bad").length, okP = D.posts.filter(p=>p.disc).length;
+  const chip = st => st==="ok"?'<span class="chip ok">OK</span>':st==="fixed"?'<span class="chip warn">Fixed</span>':st==="warn"?'<span class="chip warn">Renew soon</span>':'<span class="chip bad">Issue</span>';
+  const yn = v => v?'<span class="ic p">✓</span>':'<span class="ic f">✕</span>';
+  return `<section class="panel">
+    <div class="head"><div><span class="eyebrow">Compliance</span><h2>${D.issues?D.issues+(D.issues>1?" issues need":" issue needs")+" attention":"Campaign is compliant"}</h2><p class="muted">Checked against the UAE Advertiser Permit rules, Saudi Mawthooq licensing and the national media content standards. Keep this report in case a regulator asks.</p></div>
+      <div class="actions">${downloads?`<button class="btn primary" data-act="report">Download report</button>`:""}</div></div>
+    <div class="stats">
+      <div class="stat"><span class="eyebrow">Creators licensed</span><b>${okC}/${D.creators.length}</b><span class="muted">permit valid for their market</span></div>
+      <div class="stat"><span class="eyebrow">Posts disclosed</span><b>${okP}/${D.posts.length}</b><span class="muted">#إعلان or #ad present</span></div>
+      <div class="stat"><span class="eyebrow">Open issues</span><b>${D.issues}</b><span class="muted">${D.issues?"see below":"nothing to fix"}</span></div>
+      <div class="stat"><span class="eyebrow">Renewal alerts</span><b>${D.alerts.length}</b><span class="muted">permits expiring within 3 months</span></div>
+    </div>
+    ${D.alerts.map(a=>`<p class="note"><b>${esc(a.c.name)}</b>'s ${esc(a.c.permit.type)} expires ${esc(a.c.permit.exp)}. Rawi sent a renewal reminder; if it lapses, their posts must stop running as ads.</p>`).join("")}
+    <h3>Creators</h3>
+    <div class="tablewrap"><table class="rtable"><thead><tr><th>Creator</th><th>Licence</th><th>Number</th><th>Valid until</th><th>Status</th></tr></thead><tbody>
+      ${D.creators.map(x=>`<tr><td><b>${esc(x.c.name)}</b><br><span class="muted" style="font-size:.8rem">${esc(x.c.market)}</span></td><td data-l="Licence">${esc(x.c.permit.type)}</td><td class="mono" data-l="Number">${esc(x.c.permit.no||"—")}</td><td data-l="Valid until">${esc(x.c.permit.exp||"—")}</td><td data-l="Status">${chip(x.state)}</td></tr>`).join("")}
+    </tbody></table></div>
+    <h3>Posts and approved drafts</h3>
+    <div class="tablewrap"><table class="rtable"><thead><tr><th>Content</th><th>Disclosure</th><th>Permit shown</th><th>Claims check</th><th>Status</th></tr></thead><tbody>
+      ${D.posts.map(p=>`<tr><td><b>${esc(p.title)}</b><br><span class="muted" style="font-size:.8rem">${esc(p.c.name)} · ${esc(p.where)}</span>${p.note?`<br><span class="${p.state==="bad"?"err":"muted"}" style="font-size:.8rem">${esc(p.note)}</span>`:""}</td><td data-l="Disclosure">${yn(p.disc)}</td><td data-l="Permit">${yn(p.permit)}</td><td data-l="Claims">${yn(p.claims)}</td><td data-l="Status">${chip(p.state)}</td></tr>`).join("")}
+    </tbody></table></div>
+    <p class="muted" style="font-size:.8rem">Permit status shown here is sample data. In production Rawi checks each number against the regulator's register before hiring and again before every payout.</p>
+  </section>`;
+}
+async function downloadReport(){
+  const D = complianceData();
+  const row = cells => "<tr>"+cells.map(x=>`<td>${esc(x)}</td>`).join("")+"</tr>";
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Rawi compliance report · Tamrah</title><style>body{font:14px/1.5 system-ui,sans-serif;max-width:860px;margin:32px auto;padding:0 16px;color:#111}h1{font-size:22px}h2{font-size:16px;margin-top:28px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px 8px;text-align:left;font-size:13px}th{background:#f3f3f3}.s{color:#555}</style></head><body>
+<h1>Compliance report: Tamrah · ${esc(S.brief.title)}</h1><p class="s">Generated by Rawi on ${new Date().toISOString().slice(0,10)} · Markets: ${esc(S.markets)} · Prototype report with sample data.</p>
+<p><b>Summary:</b> ${D.issues} open issue(s); ${D.alerts.length} permit renewal alert(s); ${D.creators.length} creators; ${D.posts.length} posts and approved drafts.</p>
+<h2>Creators and licences</h2><table><tr><th>Creator</th><th>Market</th><th>Licence</th><th>Number</th><th>Valid until</th><th>Status</th></tr>${D.creators.map(x=>row([x.c.name,x.c.market,x.c.permit.type,x.c.permit.no||"—",x.c.permit.exp||"—",x.label])).join("")}</table>
+<h2>Content checks</h2><table><tr><th>Content</th><th>Creator</th><th>Disclosure</th><th>Permit shown</th><th>Claims check</th><th>Status</th><th>Note</th></tr>${D.posts.map(p=>row([p.title,p.c.name,p.disc?"Yes":"No",p.permit?"Yes":"No",p.claims?"Pass":"Fail",p.state.toUpperCase(),p.note])).join("")}</table>
+<h2>Rules applied</h2><ul><li>UAE Advertiser Permit required for promotional content, including gifted posts (from 1 Feb 2026); permit number shown on profile.</li><li>Saudi Mawthooq licence for promotional content aimed at Saudi audiences.</li><li>Ad disclosure (#إعلان / #ad) on every paid post.</li><li>No unsupported health or guaranteed-result claims; national media content standards.</li></ul>
+</body></html>`;
+  try { await downloads.save({filename:"rawi-compliance-tamrah.html", data:new Blob([html],{type:"text/html"})}); toast("Report saved"); }
+  catch(e){ if (e?.code !== "cancelled" && e?.code !== "declined") toast("The report couldn't be saved here."); }
+}
+
+async function getInsight(){
+  if (!sample) return;
+  const rows = VIDEOS.filter(isLive).map(v=>{const x=videoStats(v);return {video:v.title, creator:x.c.name, dialect:x.c.dialect, platform:PLAT[v.platform].name, views:v.views, engagement_pct:+(x.eng*100).toFixed(1), watch_through_pct:v.watch, cpm_aed:+x.cpm.toFixed(1), fee_aed:x.c.rate}});
+  S.busy.insight = true; S.insightErr = ""; S.insight = "Thinking…"; render();
+  try {
+    await sample(`You are the performance-analyst agent inside Rawi, a GCC UGC marketplace. A brand ran a Ramadan campaign for Tamrah date bars in the UAE and Saudi Arabia. Here are the posted videos' stats as JSON:\n${JSON.stringify(rows)}\n\nGive the brand manager 3 short, concrete recommendations: which videos to boost as paid partnership ads (and roughly what share of a AED 10,000 ad budget each), which creators to rehire and why, and one creative pattern to repeat in the next brief. Plain text, numbered 1-3, under 120 words total. Use only the numbers given.`,
+      {onText: ({text}) => { S.insight = text; const el=document.querySelector(".aiout .script"); if(el) el.textContent=text; }});
+  } catch(e){ if (S.insight==="Thinking…") S.insight=""; S.insightErr = errCopy(e.code); }
+  S.busy.insight = false; render();
+}
+
+/* Creator side — viewing as Noura A. */
+const ME = CREATORS[0];
+function viewJobs(){
+  const all = BRIEFS.map(b => ({b: b.tamrah ? {...b, title:S.brief.title} : b, m:matchBrief(ME, b)}));
+  const shown = all.filter(x=>!x.m.hidden).sort((a,b)=>b.m.score-a.m.score), hidden = all.filter(x=>x.m.hidden);
+  return `<section class="panel">
+    <div class="head"><div><span class="eyebrow">Viewing as ${esc(ME.name)} · ${esc(ME.city)}</span><h2>${shown.length} briefs matched to you</h2><p class="muted">Rawi scored ${all.length} open briefs against your verified profile: permit, dialect, topics, rate and delivery record.</p></div><span class="chip sf plain">Sample briefs</span></div>
+    <div class="list">${shown.map(({b,m})=>`<article class="draft">
+      <div class="head"><div><span class="eyebrow">${esc(b.brand)}</span><h3>${esc(b.title)}</h3></div><div class="score"><div class="num">${m.score}<small> match</small></div><div class="meter"><i style="width:${m.score}%"></i></div></div></div>
+      <div class="actions"><span class="chip plain">${aed(b.fee)} / video</span><span class="chip plain">${b.videos} videos</span><span class="chip plain">Due ${esc(b.due)}</span></div>
+      <p class="muted" style="font-size:.85rem">Why you: ${esc(m.why.join(" · "))}</p>
+      <div class="actions">${S.applied.has(b.id)?'<span class="chip ok">Accepted · start filming</span>':`<button class="btn primary" data-act="apply" data-id="${b.id}">Accept brief</button>`}${b.tamrah?'<button class="btn" data-go="submit">Submit a draft</button>':""}</div>
+    </article>`).join("")}</div>
+    ${hidden.length?`<details><summary class="muted" style="cursor:pointer">${hidden.length} brief${hidden.length>1?"s":""} not shown, and why</summary><ul class="checks" style="margin-top:10px">${hidden.map(({b,m})=>`<li><span class="ic f">✕</span><span><b>${esc(b.brand)}</b> · ${esc(b.title)} <span class="muted">— ${esc(m.hidden)}</span></span></li>`).join("")}</ul></details>`:""}
+  </section>`;
+}
+function viewProfile(){
+  const v = S.voice;
+  const topics = [["food",46],["family",22],["ramadan",18],["gifting",8],["beauty",6]];
+  return `<section class="panel">
+    <div class="head"><div><span class="eyebrow">Your verified profile</span><h2>What brands see, and how Rawi knows it</h2><p class="muted">Every fact on your profile shows its source. Verified facts rank higher than self-declared ones.</p></div><span class="chip sf plain">Simulated checks</span></div>
+    <div class="tablewrap"><table><thead><tr><th>Fact</th><th>Value</th><th>Source</th></tr></thead><tbody>
+      <tr><td>Identity</td><td>${esc(ME.name)}, ${esc(ME.city)}</td><td><span class="chip ok">UAE Pass</span></td></tr>
+      <tr><td>Advertiser permit</td><td class="mono">${esc(ME.permit.no)}</td><td><span class="chip ok">Checked with the National Media Authority register</span></td></tr>
+      <tr><td>Languages & dialect</td><td>Arabic (Emirati), English</td><td>${v.status==="done"?'<span class="chip ok">Voice check on your intro video</span>':'<span class="chip plain">Self-declared</span>'}</td></tr>
+      <tr><td>Topics</td><td>${topics.slice(0,3).map(t=>t[0]).join(", ")}</td><td><span class="chip ok">AI read of your last 60 posts</span></td></tr>
+      <tr><td>Audience</td><td>71% UAE · 64% aged 18–34</td><td><span class="chip ok">TikTok & Instagram insights</span></td></tr>
+      <tr><td>Reliability</td><td>${ME.rel}% on time · 12 campaigns</td><td><span class="chip ok">Rawi delivery history</span></td></tr>
+    </tbody></table></div>
+  </section>
+  <section class="panel">
+    <div class="head"><div><span class="eyebrow">Language check</span><h2>30-second intro video</h2><p class="muted">Introduce yourself in each language you'll create in. The agent transcribes it and identifies the language and dialect from your speech. It can't be gamed by typing a dialect into a form.</p></div></div>
+    <label class="f" for="introvid">Upload a new intro video<input type="file" id="introvid" accept="video/*"></label>
+    ${v.status==="running"?`<p class="status">Analysing ${esc(v.name)}… transcribing speech and identifying dialect</p>`:
+      v.status==="done"?`<div class="draft"><div class="head"><div><h3>Result for ${esc(v.name)}</h3><span class="muted" style="font-size:.82rem">Checked by the language agent · simulated result</span></div><span class="chip ok">Verified</span></div>
+      <div class="kv" style="grid-template-columns:auto 1fr auto"><span>Arabic · Emirati (Khaleeji)</span><div class="vbar" style="align-self:center"><i style="width:94%"></i></div><span class="mono">94%</span><span>English · fluent</span><div class="vbar" style="align-self:center"><i style="width:81%"></i></div><span class="mono">81%</span></div>
+      <p class="muted" style="font-size:.82rem">Brand reviews after each campaign keep confirming it. If brands repeatedly flag a mismatch, the badge goes back to "self-declared".</p></div>`:""}
+  </section>
+  <section class="panel">
+    <div class="head"><div><span class="eyebrow">Topics</span><h2>What you post about</h2><p class="muted">From the captions, speech and on-screen text of your recent posts on connected accounts.</p></div></div>
+    <div class="kv" style="grid-template-columns:90px 1fr auto">${topics.map(([t,n])=>`<span>${t}</span><div class="vbar" style="align-self:center"><i style="width:${n*2}%"></i></div><span class="mono">${n}%</span>`).join("")}</div>
+  </section>`;
+}
+function viewSubmit(){
+  const lc = localChecks(S.creatorDraft, ME); const ai = S.creatorAi;
+  return `<section class="panel">
+    <div class="head"><div><span class="eyebrow">Tamrah · ${esc(S.brief.title)}</span><h2>Pre-check your draft</h2><p class="muted">Paste your script or caption. Fix issues before the brand sees it, so you get approved and paid faster.</p></div></div>
+    <label class="f" for="cdraft">Script or caption<textarea id="cdraft" data-bind="creatorDraft" dir="auto" style="min-height:130px">${esc(S.creatorDraft)}</textarea></label>
+    <ul class="checks" id="livechecks">${lc.map(x=>`<li><span class="ic ${x.pass?"p":"f"}">${x.pass?"✓":"✕"}</span><span>${esc(x.label)}${x.note?` <span class="muted">— ${esc(x.note)}</span>`:""}</span></li>`).join("")}</ul>
+    <p class="muted" style="font-size:.82rem">Tip: add <span class="mono">#إعلان</span> and your permit number <span class="mono">${esc(ME.permit.no)}</span>.</p>
+    <div class="actions">
+      <button class="btn" data-act="creatorcheck" ${!sample||S.busy.creator?"disabled":""}>${S.busy.creator?"Checking…":"Get AI feedback"}</button>
+      <button class="btn primary" data-act="creatorsubmit">Submit to brand</button>
+      <span class="status">${esc(S.busy.creator || (sample?"":"AI feedback appears when this page is opened in Claude."))}</span>
+    </div>
+    ${ai?`<div class="aiout"><span class="chip ${ai.verdict==="approve"?"ok":"warn"}">AI: ${esc(ai.verdict)} · ${esc(ai.score)}/100</span><p>${esc(ai.summary)}</p>${(ai.fixes||[]).length?`<ul class="checks">${ai.fixes.map(f=>`<li><span class="ic f">→</span><span dir="auto">${esc(f)}</span></li>`).join("")}</ul>`:""}${ai.rewrite?`<div class="script" dir="auto">${esc(ai.rewrite)}</div><div class="actions"><button class="btn sm" data-act="userewrite">Use this version</button></div>`:""}</div>`:""}
+  </section>`;
+}
+function viewWallet(){
+  const mine = L().filter(e => e.creator===ME.id && (e.type==="release"||e.type==="bonus"));
+  const earned = mine.reduce((s,e)=>s+e.amount,0);
+  const history = [{d:"12 Aug 2026", b:"Bayt Oud", a:2000, k:"Fee"},{d:"28 Sep 2026", b:"Souq Cart app", a:1520, k:"Fee"},...mine.map(e=>({d:e.date, b:"Tamrah", a:e.amount, k:e.type==="bonus"?"View bonus":"Fee"}))];
+  return `<section class="panel">
+    <div class="head"><div><span class="eyebrow">Wallet</span><h2>${aed(990+earned)} available</h2><p class="muted">Fees land here when a brand approves your video. View bonuses land on day 7 and day 30, but only for views on your connected accounts.</p></div><span class="chip sf plain">Sample figures</span></div>
+    <div class="tablewrap"><table><thead><tr><th>Date</th><th>Brand</th><th>Type</th><th class="num">Amount</th></tr></thead><tbody>${history.reverse().map(h=>`<tr><td>${esc(h.d)}</td><td>${esc(h.b)}</td><td>${esc(h.k)}</td><td class="num">${aed(h.a)}</td></tr>`).join("")}</tbody></table></div>
+    <div class="actions"><button class="btn primary" data-act="withdraw">Withdraw to bank</button></div>
+  </section>
+  <section class="panel">
+    <div class="head"><div><span class="eyebrow">Tracking</span><h2>Connected accounts</h2><p class="muted">Connect the accounts linked to your permit. Rawi reads view counts for your campaign posts so brands see results and you earn view bonuses of AED ${BONUS_PER_K} per 1,000 views.</p></div></div>
+    <div class="conn">${["tiktok","instagram"].map(p => {
+      const on = S.conn[ME.id][p]; const asking = S.consent===p; const mine = VIDEOS.filter(v=>v.creator===ME.id&&v.platform===p);
+      return `<div class="acct">
+        <div class="top"><span class="pl" aria-hidden="true">${PLAT[p].short}</span><div><h3>${PLAT[p].name}</h3><span class="muted" style="font-size:.82rem">${on?"@noura.eats · connected":"Not connected"}</span></div></div>
+        ${on?`<p style="font-size:.85rem">${mine.length} campaign video${mine.length===1?"":"s"} reporting · ${fmt(mine.reduce((s,v)=>s+v.views,0))} views</p><div class="actions"><span class="chip ok">Live</span><button class="btn sm" data-act="disconnect" data-p="${p}">Disconnect</button></div>`
+        : asking?`<div class="consent"><b>Rawi wants to read from your ${PLAT[p].name} account</b><ul><li>Your profile name and handle</li><li>Views, likes, comments and shares on your public videos</li></ul><span class="muted">Rawi can't post, message or see private content. Disconnect any time.</span><div class="actions"><button class="btn sm primary" data-act="allow" data-p="${p}">Allow</button><button class="btn sm" data-act="cancelconsent">Cancel</button></div></div>`
+        :`<div class="actions"><button class="btn sm primary" data-act="connect" data-p="${p}">Connect ${PLAT[p].name}</button></div>`}
+      </div>`}).join("")}</div>
+    <p class="muted" style="font-size:.8rem">Simulated sign-in. In production this uses the ${PLAT.tiktok.api} and ${PLAT.instagram.api} with the creator's consent.</p>
+  </section>
+  <section class="panel">
+    <div class="head"><div><span class="eyebrow">Compliance</span><h2>Your permit</h2></div></div>
+    <div class="permit"><span class="eyebrow">${esc(ME.permit.type)} · National Media Authority</span><span class="mono">${esc(ME.permit.no)}</span><span style="font-size:.85rem">Valid to ${esc(ME.permit.exp)} · shown on your profile</span></div>
+    <p class="muted" style="font-size:.85rem">Rawi reminds you 60 days before expiry and helps you renew. Brands only see creators with a valid permit.</p>
+  </section>`;
+}
+
+const VIEWS = {brief:viewBrief, creators:viewCreators, drafts:viewDrafts, results:()=>viewResults()+viewBoost(), sales:viewSales, compliance:viewCompliance, escrow:viewEscrow, jobs:viewJobs, profile:viewProfile, submit:viewSubmit, wallet:viewWallet};
+
+function render(){
+  document.querySelectorAll("[data-mode]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode===S.mode)));
+  const tab = S.tab[S.mode];
+  const pending = S.drafts.filter(d=>d.status==="submitted").length;
+  document.getElementById("tabs").innerHTML = TABS[S.mode].map(([k,l]) => `<button data-tab="${k}" ${k===tab?'aria-current="page"':""}>${l}${k==="drafts"&&pending?`<span class="n">${pending}</span>`:""}${k==="creators"?`<span class="n">${S.invited.size}</span>`:""}</button>`).join("");
+  const ctx = document.getElementById("ctx");
+  if (S.mode==="brand"){ const nV = Object.values(S.contracts).reduce((a,k)=>a+k.videos,0); const held = sumL("fund")-sumL("release")-sumL("bonus")-sumL("refund");
+    document.getElementById("ctx-in").innerHTML = `<span><span class="dot"></span><b>Tamrah</b> · ${esc(S.brief.title)}</span><span>${Object.keys(S.contracts).length} creators · ${nV} videos</span><span>${S.stage==="closed"?"Closed · escrow empty":"In escrow <b>"+aed(held)+"</b>"}</span>`; ctx.hidden = false; }
+  else { document.getElementById("ctx-in").innerHTML = `<span><span class="dot"></span><b>${esc(ME.name)}</b> · ${esc(ME.city)}</span><span>${esc(ME.permit.type)} <span class="mono">${esc(ME.permit.no)}</span></span><span>${ME.rel}% on time</span>`; ctx.hidden = false; }
+  const active = document.activeElement?.id; const sel = active && document.activeElement.selectionStart;
+  document.getElementById("view").innerHTML = VIEWS[tab]();
+  if (active){const el=document.getElementById(active); if(el){el.focus(); try{if(sel!=null)el.setSelectionRange(sel,sel)}catch{}}}
+}
+
+let tt; function toast(m){const t=document.getElementById("toast");document.getElementById("toast-msg").textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2600)}
+
+/* ---------- Events ---------- */
+document.addEventListener("click", async e => {
+  const m = e.target.closest("[data-mode]"); if (m){S.mode=m.dataset.mode;store.set("mode",S.mode);render();scrollTo(0,0);return}
+  const t = e.target.closest("[data-tab],[data-go]"); if (t){S.tab[S.mode]=t.dataset.tab||t.dataset.go;store.set("tab",S.tab);render();scrollTo(0,0);return}
+  const a = e.target.closest("[data-act]"); if (!a) return;
+  const id = a.dataset.id;
+  switch(a.dataset.act){
+    case "brief": S.briefErr=""; writeBrief(); break;
+    case "permitOnly": S.permitOnly = a.checked; render(); break;
+    case "invite": {
+      const c = byId(id);
+      if (S.stage==="closed"){ toast("This campaign is closed"); break; }
+      if (S.invited.has(id)){
+        if (countL("release",id)>0){ toast(c.name+" already has approved videos and can't be removed"); break; }
+        const m = creatorMoney(id);
+        if (m){ L().push({date:"Today", type:"refund", creator:id, text:`Invite withdrawn: ${c.name}'s escrow returned to brand`, amount:m.held}); L().push({date:"Today", type:"feerefund", text:`Rawi fee refunded for ${c.name}`, amount:m.videos*c.rate*FEE}); delete S.contracts[id]; }
+        S.invited.delete(id); toast("Invite withdrawn. "+aed(m?m.held:0)+" returned to the brand");
+      } else {
+        S.invited.add(id); S.contracts[id] = {videos:2}; topUp(id, 2, "new invite");
+        toast("Invited "+c.name+". Escrow topped up by "+aed(2*(c.rate+BONUS_CAP)));
+      }
+      render(); break; }
+    case "bonus7": { const r = runBonus(7); toast(aed(r.total)+" in day-7 bonuses paid"+(r.skipped.length?" · "+r.skipped.length+" video(s) skipped: not connected":"")); render(); break; }
+    case "bonus30": { const r = runBonus(30); toast(aed(r.total)+" in day-30 bonuses paid"); render(); break; }
+    case "close": { const back = closeCampaign(); toast("Campaign closed. "+aed(back)+" returned to the brand"); render(); break; }
+    case "ledger": S.showLedger = !S.showLedger; render(); break;
+    case "aicheck": { const d=S.drafts.find(x=>x.id===id); const r=await aiCheck(d.text, byId(d.creator), "d_"+id); if(r){d.ai=r} render(); break; }
+    case "revise": { const d=S.drafts.find(x=>x.id===id); d.status="revise"; toast("Sent back to "+byId(d.creator).name+" with the checklist"); render(); break; }
+    case "approve": { const d=S.drafts.find(x=>x.id===id); const c=byId(d.creator); approveDraft(d); toast("Approved. "+aed(c.rate)+" paid to "+c.name+" from escrow"); render(); break; }
+    case "apply": S.applied.add(id); toast("Brief accepted"); render(); break;
+    case "creatorcheck": { const r=await aiCheck(S.creatorDraft, ME, "creator"); if(r) S.creatorAi=r; render(); break; }
+    case "userewrite": if(S.creatorAi?.rewrite){S.creatorDraft=S.creatorAi.rewrite; S.creatorAi=null; render();} break;
+    case "creatorsubmit": { const lc=localChecks(S.creatorDraft, ME); if(lc.some(x=>!x.pass)){toast("Fix the failed checks before submitting");break} S.drafts.unshift({id:"d"+Date.now(), creator:ME.id, text:S.creatorDraft, status:"submitted", ai:null}); toast("Submitted to Tamrah. Switch to Brand to review it."); render(); break; }
+    case "withdraw": toast("Withdrawals are simulated in this prototype"); break;
+    case "connect": S.consent = a.dataset.p; render(); break;
+    case "cancelconsent": S.consent = null; render(); break;
+    case "allow": S.conn[ME.id][a.dataset.p] = true; S.consent = null; toast(PLAT[a.dataset.p].name+" connected. Your campaign views now show to the brand."); render(); break;
+    case "disconnect": S.conn[ME.id][a.dataset.p] = false; toast(PLAT[a.dataset.p].name+" disconnected"); render(); break;
+    case "sync": { const d=new Date(); S.synced = String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0"); toast("Synced with TikTok and Instagram"); render(); break; }
+    case "insight": getInsight(); break;
+    case "aifit": aiFit(); break;
+    case "vidai": { const d=S.drafts.find(x=>x.id===id); if (d?.video) reviewVideo(d); break; }
+    case "vidclear": { const d=S.drafts.find(x=>x.id===id); if (d){ d.video=null; d.vai=null; render(); } break; }
+    case "usehook": { const l = LIBRARY[+a.dataset.i]; if (l && !S.brief.hooks.includes(l.hook)){ S.brief = {...S.brief, hooks:[...S.brief.hooks, l.hook]}; toast("Hook added to the brief"); render(); } break; }
+    case "adlaunch": S.ads = boostPlan(); toast("Boost requests sent to creators. Ads go live once they approve."); render(); break;
+    case "adstop": S.ads = null; toast("Boosts paused"); render(); break;
+    case "storeask": S.storeConsent = a.dataset.s; render(); break;
+    case "storecancel": S.storeConsent = null; render(); break;
+    case "storeallow": S.store = S.storeConsent; S.storeConsent = null; toast(STORES[S.store]+" connected"); render(); break;
+    case "storeoff": S.store = null; render(); break;
+    case "report": downloadReport(); break;
+  }
+});
+/* Chart hover: crosshair + tooltip */
+function chartHover(e){
+  const wrap = document.getElementById("chart"); if (!wrap) return;
+  const hit = document.getElementById("hit"), tip = document.getElementById("tip"), xh = document.getElementById("xh"), hd = document.getElementById("hd");
+  if (!wrap.contains(e.target) || e.type==="pointerleave"){ tip.hidden = true; xh.setAttribute("visibility","hidden"); hd.setAttribute("visibility","hidden"); return; }
+  const series = wrap.dataset.series.split(",").map(Number);
+  const svg = wrap.querySelector("svg"); const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+  const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+  const L = +hit.getAttribute("x"), Wd = +hit.getAttribute("width");
+  const i = Math.max(0, Math.min(series.length-1, Math.round((p.x-L)/Wd*(series.length-1))));
+  const line = wrap.querySelector(".line").getAttribute("points").split(" ")[i].split(",").map(Number);
+  xh.setAttribute("x1",line[0]); xh.setAttribute("x2",line[0]); xh.setAttribute("visibility","visible");
+  hd.setAttribute("cx",line[0]); hd.setAttribute("cy",line[1]); hd.setAttribute("visibility","visible");
+  const r = svg.getBoundingClientRect(), wr = wrap.getBoundingClientRect(), sc = r.width/(+wrap.dataset.w||640);
+  tip.textContent = DAYS[i]+" · "+fmt(series[i])+" views"; tip.hidden = false;
+  const left = Math.max(60, Math.min(wr.width-60, line[0]*sc));
+  tip.style.left = left+"px"; tip.style.top = (line[1]*sc)+"px";
+}
+document.addEventListener("pointermove", chartHover);
+document.addEventListener("pointerdown", chartHover);
+document.addEventListener("pointerleave", chartHover, true);
+
+document.addEventListener("change", async e => {
+  const vid = e.target.dataset?.vid;
+  if (vid && e.target.files?.[0]){
+    const d = S.drafts.find(x=>x.id===vid); const key = "v_"+vid;
+    S.busy[key] = "Reading the video…"; render();
+    try { d.video = await extractFrames(e.target.files[0]); d.vai = null; } catch(err){ toast(err.message || "This video couldn't be read."); }
+    S.busy[key] = ""; render(); return;
+  }
+  if (e.target.id === "adBudget"){ render(); return; }
+  if (e.target.id !== "introvid" || !e.target.files?.[0]) return;
+  S.voice = {status:"running", name:e.target.files[0].name}; render();
+  setTimeout(() => { S.voice.status = "done"; toast("Language check complete"); render(); }, 2200);
+});
+document.addEventListener("input", e => {
+  const k = e.target.dataset?.bind; if (!k) return;
+  S[k] = e.target.type==="number" ? Number(e.target.value) : e.target.value;
+  if (k==="creatorDraft"){ const lc=localChecks(S.creatorDraft, ME); const ul=document.getElementById("livechecks"); if(ul) ul.innerHTML = lc.map(x=>`<li><span class="ic ${x.pass?"p":"f"}">${x.pass?"✓":"✕"}</span><span>${esc(x.label)}${x.note?` <span class="muted">— ${esc(x.note)}</span>`:""}</span></li>`).join(""); }
+});
+
+render();
+})();
+</script>
+
+</body></html>
